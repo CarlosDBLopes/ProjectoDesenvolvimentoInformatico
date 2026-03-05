@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Platform } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
@@ -29,7 +29,7 @@ export default function App() {
           tabBarStyle: {
             backgroundColor: "#ffffff",
             height: 90,
-            paddingBottom: 25,
+            paddingBottom: Platform.OS === "ios" ? 30 : 20,
             elevation: 10,
             shadowColor: "#000",
             shadowOffset: { width: 0, height: -2 },
