@@ -10,14 +10,14 @@ export const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
+    // Fix temporário
+    //marginBottom: -40,
     paddingTop: 20,
     paddingHorizontal: 20,
+    // Fix temporário
+    //paddingBottom: Platform.OS === "android" ? 95 : 75,
     paddingBottom: Platform.OS === "android" ? 60 : 40,
     minHeight: 350,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.1,
-    elevation: 10,
   },
   cabecalho: {
     flexDirection: "row",
@@ -59,7 +59,7 @@ export const styles = StyleSheet.create({
     alignItems: "center",
   },
   textoQtd: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: "bold",
     marginHorizontal: 20,
     color: "#333",

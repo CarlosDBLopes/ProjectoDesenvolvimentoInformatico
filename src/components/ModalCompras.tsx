@@ -13,21 +13,47 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 
 import { styles } from "../styles/ModalComprasStyles";
+import AlertaPersonalizado from "./AlertaPersonalizado";
 
 interface ModalComprasProps {
   visivel: boolean;
   aoFechar: () => void;
-  aoGuardar: (nome: string, marca: string, quantidade: number) => void;
+  aoGuardar: (
+    nome: string,
+    marca: string,
+    quantidade: number,
+    id?: string,
+  ) => void;
+  produtoEdicao?: {
+    id: string;
+    nome: string;
+    marca: string;
+    quantidade: number;
+  } | null;
 }
 
 export default function ModalCompras({
   visivel,
   aoFechar,
   aoGuardar,
+  produtoEdicao,
 }: ModalComprasProps) {
   const [nome, setNome] = useState("");
   const [marca, setMarca] = useState("");
   const [quantidade, setQuantidade] = useState(1);
+  const [alertaVisivel, setAlertaVisivel] = useState(false);
+
+  useEffect(() => {
+    if (produtoEdicao) {
+      setNome(produtoEdicao.nome);
+      setMarca(produtoEdicao.marca || "");
+      setQuantidade(produtoEdicao.quantidade);
+    } else {
+      setNome("");
+      setMarca("");
+      setQuantidade(1);
+    }
+  }, [produtoEdicao, visivel]);
 
   const limparEFechar = () => {
     setNome("");
@@ -38,31 +64,37 @@ export default function ModalCompras({
 
   const lidarComGuardar = () => {
     if (nome.trim() === "") {
-      alert("Por favor, insera o nome do produto!");
+      setAlertaVisivel(true);
       return;
     }
-    aoGuardar(nome, marca, quantidade);
+    aoGuardar(nome, marca, quantidade, produtoEdicao?.id);
     limparEFechar();
   };
+
+  const modoEdicao = !!produtoEdicao;
 
   return (
     <Modal
       animationType="slide"
-      transparent={true}
+      transparent
       visible={visivel}
+      navigationBarTranslucent
       onRequestClose={limparEFechar}
-      statusBarTranslucent={true}
+      statusBarTranslucent
     >
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.select({ ios: 0, android: -47 })}
       >
         <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
           <View style={styles.fundoEscuro}>
             <TouchableWithoutFeedback>
               <View style={styles.cartaoModal}>
                 <View style={styles.cabecalho}>
-                  <Text style={styles.titulo}>Adicionar à Lista</Text>
+                  <Text style={styles.titulo}>
+                    {modoEdicao ? "Editar Produto" : "Adicionar à Lista"}
+                  </Text>
                   <TouchableOpacity onPress={limparEFechar}>
                     <Ionicons name="close" size={28} color="#888" />
                   </TouchableOpacity>
@@ -108,13 +140,19 @@ export default function ModalCompras({
                   onPress={lidarComGuardar}
                 >
                   <Text style={styles.textoBotaoGuardar}>
-                    Adicionar à Lista
+                    {modoEdicao ? "Guardar Alterações" : "Adicionar à Lista"}
                   </Text>
                 </TouchableOpacity>
               </View>
             </TouchableWithoutFeedback>
           </View>
         </TouchableWithoutFeedback>
+
+        <AlertaPersonalizado
+          visivel={alertaVisivel}
+          mensagem="Por favor, insira o nome do produto!"
+          aoFechar={() => setAlertaVisivel(false)}
+        />
       </KeyboardAvoidingView>
     </Modal>
   );

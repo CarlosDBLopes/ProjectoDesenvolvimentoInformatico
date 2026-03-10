@@ -3,6 +3,7 @@ import { View, StyleSheet, Platform } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 import Dashboard from "./src/screens/Dashboard";
 import Despensa from "./src/screens/Despensa";
@@ -44,7 +45,7 @@ export default function App() {
           options={{
             headerTitle: "A Minha Despensa",
             tabBarIcon: ({ color, size }) => (
-              <Ionicons name="fast-food-outline" size={size} color={color} />
+              <MaterialIcons name="food-bank" size={size} color={color} />
             ),
           }}
         />
@@ -78,7 +79,7 @@ export default function App() {
           options={{
             headerTitle: "Lista de Compras",
             tabBarIcon: ({ color, size }) => (
-              <Ionicons name="cart-outline" size={size} color={color} />
+              <MaterialIcons name="shopping-cart" size={size} color={color} />
             ),
           }}
         />

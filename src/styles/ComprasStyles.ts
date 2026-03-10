@@ -91,6 +91,11 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     textAlign: "center",
   },
+  colEdit: {
+    width: 35,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   colDelete: {
     width: 45,
     alignItems: "center",

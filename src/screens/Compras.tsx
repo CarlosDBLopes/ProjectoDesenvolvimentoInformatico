@@ -14,19 +14,29 @@ import ModalCompras from "../components/ModalCompras";
 export default function Compras() {
   const [pesquisa, setPesquisa] = useState("");
   const [modalVisivel, setModalVisivel] = useState(false);
-  const adicionarProduto = (
+  const [produtoEditando, setProdutoEditando] = useState<any>(null);
+  const guardarProduto = (
     nome: string,
     marca: string,
     quantidade: number,
+    id?: string,
   ) => {
-    const novoProduto = {
-      id: Math.random().toString(),
-      nome: nome,
-      marca: marca,
-      quantidade: quantidade,
-      comprado: false,
-    };
-    setListaCompras((listaAtual) => [novoProduto, ...listaAtual]);
+    if (id) {
+      setListaCompras((listaAtual) =>
+        listaAtual.map((item) =>
+          item.id === id ? { ...item, nome, marca, quantidade } : item,
+        ),
+      );
+    } else {
+      const novoProduto = {
+        id: Math.random().toString(),
+        nome: nome,
+        marca: marca,
+        quantidade: quantidade,
+        comprado: false,
+      };
+      setListaCompras((listaAtual) => [novoProduto, ...listaAtual]);
+    }
   };
   const [listaCompras, setListaCompras] = useState([
     {
@@ -123,6 +133,16 @@ export default function Compras() {
       </View>
 
       <TouchableOpacity
+        style={styles.colEdit}
+        onPress={() => {
+          setProdutoEditando(item);
+          setModalVisivel(true);
+        }}
+      >
+        <Ionicons name="pencil" size={20} color="#2196F3" />
+      </TouchableOpacity>
+
+      <TouchableOpacity
         style={styles.colDelete}
         onPress={() => removerItem(item.id)}
       >
@@ -151,7 +171,10 @@ export default function Compras() {
 
         <TouchableOpacity
           style={styles.botaoAdicionar}
-          onPress={() => setModalVisivel(true)}
+          onPress={() => {
+            setProdutoEditando(null);
+            setModalVisivel(true);
+          }}
         >
           <Ionicons name="add" size={28} color="#fff" />
         </TouchableOpacity>
@@ -161,6 +184,7 @@ export default function Compras() {
         <View style={styles.colCheckbox} />
         <Text style={[styles.textoCabecalho, styles.colNome]}>Produto</Text>
         <Text style={[styles.textoCabecalho, styles.colQtd]}>Qtd.</Text>
+        <View style={styles.colEdit} />
         <View style={styles.colDelete} />
       </View>
 
@@ -175,7 +199,8 @@ export default function Compras() {
       <ModalCompras
         visivel={modalVisivel}
         aoFechar={() => setModalVisivel(false)}
-        aoGuardar={adicionarProduto}
+        aoGuardar={guardarProduto}
+        produtoEdicao={produtoEditando}
       />
     </View>
   );
