@@ -10,11 +10,16 @@ import { Ionicons } from "@expo/vector-icons";
 
 import { styles } from "../styles/ComprasStyles";
 import ModalCompras from "../components/ModalCompras";
+import AlertaConfirmacao from "../components/AlertaConfirmacao";
 
 export default function Compras() {
   const [pesquisa, setPesquisa] = useState("");
   const [modalVisivel, setModalVisivel] = useState(false);
   const [produtoEditando, setProdutoEditando] = useState<any>(null);
+
+  const [confirmacaoVisivel, setConfirmacaoVisivel] = useState(false);
+  const [produtoParaRemover, setProdutoParaRemover] = useState<any>(null);
+
   const guardarProduto = (
     nome: string,
     marca: string,
@@ -86,6 +91,22 @@ export default function Compras() {
     );
   };
 
+  const pedirConfirmacaoRemocao = (itemSelecionado: any) => {
+    setProdutoParaRemover(itemSelecionado);
+    setConfirmacaoVisivel(true);
+  };
+
+  const confirmarRemocao = () => {
+    if (produtoParaRemover) {
+      removerItem(produtoParaRemover.id);
+      setConfirmacaoVisivel(false);
+
+      setTimeout(() => {
+        setProdutoParaRemover(null);
+      }, 300);
+    }
+  };
+
   const itensParaMostrar = listaCompras
     .filter(
       (item) =>
@@ -144,7 +165,7 @@ export default function Compras() {
 
       <TouchableOpacity
         style={styles.colDelete}
-        onPress={() => removerItem(item.id)}
+        onPress={() => pedirConfirmacaoRemocao(item)}
       >
         <Ionicons name="close" size={24} color="#f44336" />
       </TouchableOpacity>
@@ -201,6 +222,18 @@ export default function Compras() {
         aoFechar={() => setModalVisivel(false)}
         aoGuardar={guardarProduto}
         produtoEdicao={produtoEditando}
+      />
+
+      <AlertaConfirmacao
+        visivel={confirmacaoVisivel}
+        titulo="Remover da Lista"
+        mensagem={
+          produtoParaRemover
+            ? `Tem a certeza que pretende remover "${produtoParaRemover?.nome}" da lista de compras?`
+            : "A carregar..."
+        }
+        aoCancelar={() => setConfirmacaoVisivel(false)}
+        aoConfirmar={confirmarRemocao}
       />
     </View>
   );

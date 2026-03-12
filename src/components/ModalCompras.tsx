@@ -78,9 +78,9 @@ export default function ModalCompras({
       animationType="slide"
       transparent
       visible={visivel}
-      navigationBarTranslucent
       onRequestClose={limparEFechar}
-      statusBarTranslucent
+      statusBarTranslucent={true}
+      navigationBarTranslucent={true}
     >
       <KeyboardAvoidingView
         style={{ flex: 1 }}

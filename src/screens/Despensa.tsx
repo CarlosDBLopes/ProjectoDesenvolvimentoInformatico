@@ -5,10 +5,12 @@ import {
   TextInput,
   FlatList,
   TouchableOpacity,
+  Image,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 import { styles } from "../styles/DespensaStyles";
+import ModalDespensa from "../components/ModalDespensa";
 
 export default function Despensa() {
   const [pesquisa, setPesquisa] = useState("");
@@ -43,6 +45,45 @@ export default function Despensa() {
     },
   ]);
 
+  const [modalVisivel, setModalVisivel] = useState(false);
+  const [produtoEditando, setProdutoEditando] = useState<any>(null);
+
+  const guardarProduto = (
+    nome: string,
+    marca: string,
+    quantidade: number,
+    validade: string,
+    imagem: string | null,
+    id?: string,
+  ) => {
+    if (id) {
+      setProdutos((produtosAtuais) =>
+        produtosAtuais.map((produto) =>
+          produto.id === id
+            ? { ...produto, nome, marca, quantidade, validade, imagem }
+            : produto,
+        ),
+      );
+    } else {
+      const novoProduto = {
+        id: Math.random().toString(),
+        nome,
+        marca,
+        quantidade,
+        validade,
+        imagem,
+        status: "verde",
+      };
+      setProdutos((produtosAtuais) => [novoProduto, ...produtosAtuais]);
+    }
+  };
+
+  const removerProduto = (id: string) => {
+    setProdutos((produtosAtuais) =>
+      produtosAtuais.filter((produto) => produto.id !== id),
+    );
+  };
+
   const produtosFiltrados = produtos.filter(
     (produto) =>
       produto.nome.toLowerCase().includes(pesquisa.toLowerCase()) ||
@@ -59,12 +100,22 @@ export default function Despensa() {
   const desenharCartao = ({ item }: { item: any }) => (
     <TouchableOpacity
       style={styles.cartao}
-      onPress={() => console.log("Abrir produto:", item.nome)}
+      onPress={() => {
+        setProdutoEditando(item);
+        setModalVisivel(true);
+      }}
     >
       <View style={styles.colImagem}>
-        <View style={styles.caixaImagemPlaceholder}>
-          <Ionicons name="image-outline" size={20} color="#aaa" />
-        </View>
+        {item.imagem ? (
+          <Image
+            source={{ uri: item.imagem }}
+            style={styles.caixaImagemPlaceholder}
+          />
+        ) : (
+          <View style={styles.caixaImagemPlaceholder}>
+            <Ionicons name="image-outline" size={20} color="#aaa" />
+          </View>
+        )}
       </View>
 
       <View style={styles.colNome}>
@@ -108,7 +159,13 @@ export default function Despensa() {
             onChangeText={(texto) => setPesquisa(texto)}
           />
         </View>
-        <TouchableOpacity style={styles.botaoAdicionar}>
+        <TouchableOpacity
+          style={styles.botaoAdicionar}
+          onPress={() => {
+            setProdutoEditando(null);
+            setModalVisivel(true);
+          }}
+        >
           <Ionicons name="add" size={28} color="#fff" />
         </TouchableOpacity>
       </View>
@@ -126,6 +183,14 @@ export default function Despensa() {
         renderItem={desenharCartao}
         contentContainerStyle={styles.lista}
         ListFooterComponent={<View style={{ height: 110 }} />}
+      />
+
+      <ModalDespensa
+        visivel={modalVisivel}
+        aoFechar={() => setModalVisivel(false)}
+        aoGuardar={guardarProduto}
+        aoEliminar={removerProduto}
+        produtoEdicao={produtoEditando}
       />
     </View>
   );
