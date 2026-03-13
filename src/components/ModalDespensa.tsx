@@ -17,6 +17,7 @@ import * as ImagePicker from "expo-image-picker";
 import { styles } from "../styles/ModalDespensaStyles";
 import AlertaPersonalizado from "./AlertaPersonalizado";
 import AlertaConfirmacao from "./AlertaConfirmacao";
+import AlertaPermissoes from "./AlertaPermissoes";
 import MenuImagem from "./MenuImagem";
 
 interface ModalDespensaProps {
@@ -56,6 +57,8 @@ export default function ModalDespensa({
 
   const [alertaVisivel, setAlertaVisivel] = useState(false);
   const [confirmacaoVisivel, setConfirmacaoVisivel] = useState(false);
+  const [alertaPermissaoVisivel, setAlertaPermissaoVisivel] = useState(false);
+  const [mensagemPermissao, setMensagemPermissao] = useState("");
   const [menuImagemVisivel, setMenuImagemVisivel] = useState(false);
 
   useEffect(() => {
@@ -117,7 +120,8 @@ export default function ModalDespensa({
   const tirarFoto = async () => {
     const permissao = await ImagePicker.requestCameraPermissionsAsync();
     if (!permissao.granted) {
-      alert("É necessária permissão para aceder à câmara!");
+      setMensagemPermissao("É necessária permissão para aceder à câmara!");
+      setAlertaPermissaoVisivel(true);
       return;
     }
     const resultado = await ImagePicker.launchCameraAsync({
@@ -133,7 +137,8 @@ export default function ModalDespensa({
   const escolherDaGaleria = async () => {
     const permissao = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!permissao.granted) {
-      alert("É necessária permissão para aceder à galeria!");
+      setMensagemPermissao("É necessária permissão para aceder à galeria!");
+      setAlertaPermissaoVisivel(true);
       return;
     }
     const resultado = await ImagePicker.launchImageLibraryAsync({
@@ -298,6 +303,12 @@ export default function ModalDespensa({
           mensagem={`Tem a certeza que pretende remover "${nome}" da despensa?`}
           aoCancelar={() => setConfirmacaoVisivel(false)}
           aoConfirmar={confirmarEliminacao}
+        />
+
+        <AlertaPermissoes
+          visivel={alertaPermissaoVisivel}
+          mensagem={mensagemPermissao}
+          aoFechar={() => setAlertaPermissaoVisivel(false)}
         />
 
         <MenuImagem

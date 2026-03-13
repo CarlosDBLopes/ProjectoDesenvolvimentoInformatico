@@ -83,9 +83,9 @@ export const styles = StyleSheet.create({
   },
   botaoQtd: {
     backgroundColor: "#e9ecef",
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     justifyContent: "center",
     alignItems: "center",
   },

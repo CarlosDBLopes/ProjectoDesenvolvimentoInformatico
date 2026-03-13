@@ -26,7 +26,7 @@ export default function MenuImagem({
     <Modal
       transparent={true}
       visible={visivel}
-      animationType="fade"
+      animationType="slide"
       statusBarTranslucent={true}
       navigationBarTranslucent={true}
     >
@@ -52,7 +52,7 @@ export default function MenuImagem({
                       { backgroundColor: "#e8f5e9" },
                     ]}
                   >
-                    <Ionicons name="camera-outline" size={30} color="#2e7d32" />
+                    <Ionicons name="camera-outline" size={30} color="#4caf50" />
                   </View>
                   <Text style={styles.opcaoTexto}>Tirar Foto</Text>
                 </TouchableOpacity>
@@ -67,7 +67,7 @@ export default function MenuImagem({
                       { backgroundColor: "#e3f2fd" },
                     ]}
                   >
-                    <Ionicons name="image-outline" size={30} color="#2196f3" />
+                    <Ionicons name="image-outline" size={30} color="#2196F3" />
                   </View>
                   <Text style={styles.opcaoTexto}>Escolher da Galeria</Text>
                 </TouchableOpacity>

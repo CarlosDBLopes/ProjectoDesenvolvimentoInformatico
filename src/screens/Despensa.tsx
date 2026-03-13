@@ -48,6 +48,32 @@ export default function Despensa() {
   const [modalVisivel, setModalVisivel] = useState(false);
   const [produtoEditando, setProdutoEditando] = useState<any>(null);
 
+  const calcularStatusValidade = (validade?: string) => {
+    if (!validade || validade.length < 10) return "verde";
+
+    const partes = validade.split("/");
+    if (partes.length !== 3) return "verde";
+
+    const dia = parseInt(partes[0], 10);
+    const mes = parseInt(partes[1], 10) - 1;
+    const ano = parseInt(partes[2], 10);
+
+    const dataValidade = new Date(ano, mes, dia);
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+
+    const diferencaTempo = dataValidade.getTime() - hoje.getTime();
+    const diferencaDias = Math.ceil(diferencaTempo / (1000 * 3600 * 24));
+
+    if (diferencaDias < 0) {
+      return "vermelho";
+    } else if (diferencaDias <= 3) {
+      return "amarelo";
+    } else {
+      return "verde";
+    }
+  };
+
   const guardarProduto = (
     nome: string,
     marca: string,
@@ -56,11 +82,21 @@ export default function Despensa() {
     imagem: string | null,
     id?: string,
   ) => {
+    const novoStatus = calcularStatusValidade(validade);
+
     if (id) {
       setProdutos((produtosAtuais) =>
         produtosAtuais.map((produto) =>
           produto.id === id
-            ? { ...produto, nome, marca, quantidade, validade, imagem }
+            ? {
+                ...produto,
+                nome,
+                marca,
+                quantidade,
+                validade,
+                imagem,
+                status: novoStatus,
+              }
             : produto,
         ),
       );
@@ -72,7 +108,7 @@ export default function Despensa() {
         quantidade,
         validade,
         imagem,
-        status: "verde",
+        status: novoStatus,
       };
       setProdutos((produtosAtuais) => [novoProduto, ...produtosAtuais]);
     }
