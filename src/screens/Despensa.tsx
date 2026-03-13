@@ -127,9 +127,9 @@ export default function Despensa() {
   );
 
   const getCorStatus = (status: string) => {
-    if (status === "verde") return "#4caf50";
-    if (status === "amarelo") return "#ffeb3b";
-    if (status === "vermelho") return "#f44336";
+    if (status === "verde") return "#2e7d32";
+    if (status === "amarelo") return "#f0c609";
+    if (status === "vermelho") return "#9b111e";
     return "#ccc";
   };
 
