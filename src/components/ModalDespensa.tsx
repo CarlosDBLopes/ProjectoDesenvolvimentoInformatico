@@ -4,7 +4,7 @@ import {
   View,
   Text,
   TextInput,
-  TouchableOpacity,
+  Pressable,
   Platform,
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
@@ -188,15 +188,23 @@ export default function ModalDespensa({
                   <Text style={styles.titulo}>
                     {modoEdicao ? "Editar Produto" : "Adicionar à Despensa"}
                   </Text>
-                  <TouchableOpacity onPress={limparEFechar}>
+                  <Pressable
+                    onPress={limparEFechar}
+                    style={({ pressed }) => [
+                      pressed && { transform: [{ scale: 0.85 }], opacity: 0.7 },
+                    ]}
+                  >
                     <Ionicons name="close" size={28} color="#888" />
-                  </TouchableOpacity>
+                  </Pressable>
                 </View>
 
                 <View style={styles.fotoContainer}>
-                  <TouchableOpacity
-                    style={styles.fotoPlaceholder}
+                  <Pressable
                     onPress={escolherOrigemImagem}
+                    style={({ pressed }) => [
+                      styles.fotoPlaceholder,
+                      pressed && { transform: [{ scale: 0.96 }], opacity: 0.8 },
+                    ]}
                   >
                     {imagem ? (
                       <Image
@@ -206,7 +214,7 @@ export default function ModalDespensa({
                     ) : (
                       <Ionicons name="camera-outline" size={32} color="#aaa" />
                     )}
-                  </TouchableOpacity>
+                  </Pressable>
                 </View>
 
                 <Text style={styles.label}>Nome do Produto *</Text>
@@ -229,23 +237,37 @@ export default function ModalDespensa({
                   <View style={styles.metadeEsq}>
                     <Text style={styles.label}>Quantidade</Text>
                     <View style={styles.zonaQuantidade}>
-                      <TouchableOpacity
-                        style={styles.botaoQtd}
-                        onPress={() =>
-                          setQuantidade((qtd) => Math.max(1, qtd - 1))
-                        }
+                      <Pressable
+                        onPress={() => {
+                          setQuantidade((qtd) => Math.max(1, qtd - 1));
+                        }}
+                        style={({ pressed }) => [
+                          styles.botaoQtd,
+                          pressed && {
+                            transform: [{ scale: 0.9 }],
+                            opacity: 0.85,
+                          },
+                        ]}
                       >
                         <Ionicons name="remove" size={24} color="#333" />
-                      </TouchableOpacity>
+                      </Pressable>
 
                       <Text style={styles.textoQtd}>{quantidade}</Text>
 
-                      <TouchableOpacity
-                        style={styles.botaoQtd}
-                        onPress={() => setQuantidade((qtd) => qtd + 1)}
+                      <Pressable
+                        onPress={() => {
+                          setQuantidade((qtd) => Math.max(1, qtd + 1));
+                        }}
+                        style={({ pressed }) => [
+                          styles.botaoQtd,
+                          pressed && {
+                            transform: [{ scale: 0.9 }],
+                            opacity: 0.85,
+                          },
+                        ]}
                       >
                         <Ionicons name="add" size={24} color="#333" />
-                      </TouchableOpacity>
+                      </Pressable>
                     </View>
                   </View>
 
@@ -264,27 +286,47 @@ export default function ModalDespensa({
 
                 {modoEdicao ? (
                   <View style={styles.rodapeBotoes}>
-                    <TouchableOpacity
-                      style={[styles.botaoMetade, styles.botaoEliminar]}
+                    <Pressable
                       onPress={lidarComEliminar}
+                      style={({ pressed }) => [
+                        styles.botaoMetade,
+                        styles.botaoEliminar,
+                        pressed && {
+                          transform: [{ scale: 0.96 }],
+                          opacity: 0.85,
+                        },
+                      ]}
                     >
                       <Text style={styles.textoBotao}>Eliminar</Text>
-                    </TouchableOpacity>
+                    </Pressable>
 
-                    <TouchableOpacity
-                      style={[styles.botaoMetade, styles.botaoGuardarMetade]}
+                    <Pressable
                       onPress={lidarComGuardar}
+                      style={({ pressed }) => [
+                        styles.botaoMetade,
+                        styles.botaoGuardarMetade,
+                        pressed && {
+                          transform: [{ scale: 0.96 }],
+                          opacity: 0.85,
+                        },
+                      ]}
                     >
                       <Text style={styles.textoBotao}>Guardar</Text>
-                    </TouchableOpacity>
+                    </Pressable>
                   </View>
                 ) : (
-                  <TouchableOpacity
-                    style={styles.botaoGuardar}
+                  <Pressable
                     onPress={lidarComGuardar}
+                    style={({ pressed }) => [
+                      styles.botaoGuardar,
+                      pressed && {
+                        transform: [{ scale: 0.96 }],
+                        opacity: 0.85,
+                      },
+                    ]}
                   >
                     <Text style={styles.textoBotao}>Adicionar à Despensa</Text>
-                  </TouchableOpacity>
+                  </Pressable>
                 )}
               </View>
             </TouchableWithoutFeedback>

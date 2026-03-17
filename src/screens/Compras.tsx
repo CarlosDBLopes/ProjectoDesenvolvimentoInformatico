@@ -5,6 +5,7 @@ import {
   TextInput,
   FlatList,
   TouchableOpacity,
+  Pressable,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -153,22 +154,30 @@ export default function Compras() {
         </Text>
       </View>
 
-      <TouchableOpacity
-        style={styles.colEdit}
+      <Pressable
         onPress={() => {
           setProdutoEditando(item);
           setModalVisivel(true);
         }}
+        style={({ pressed }) => [
+          styles.colEdit,
+          pressed && { transform: [{ scale: 0.9 }], opacity: 0.85 },
+        ]}
       >
         <Ionicons name="pencil" size={20} color="#2196F3" />
-      </TouchableOpacity>
+      </Pressable>
 
-      <TouchableOpacity
-        style={styles.colDelete}
-        onPress={() => pedirConfirmacaoRemocao(item)}
+      <Pressable
+        onPress={() => {
+          pedirConfirmacaoRemocao(item);
+        }}
+        style={({ pressed }) => [
+          styles.colDelete,
+          pressed && { transform: [{ scale: 0.9 }], opacity: 0.85 },
+        ]}
       >
         <Ionicons name="close" size={24} color="#f44336" />
-      </TouchableOpacity>
+      </Pressable>
     </TouchableOpacity>
   );
 
@@ -190,15 +199,18 @@ export default function Compras() {
           />
         </View>
 
-        <TouchableOpacity
-          style={styles.botaoAdicionar}
+        <Pressable
           onPress={() => {
             setProdutoEditando(null);
             setModalVisivel(true);
           }}
+          style={({ pressed }) => [
+            styles.botaoAdicionar,
+            pressed && { transform: [{ scale: 0.9 }], opacity: 0.85 },
+          ]}
         >
           <Ionicons name="add" size={28} color="#fff" />
-        </TouchableOpacity>
+        </Pressable>
       </View>
 
       <View style={styles.cabecalhoTabela}>

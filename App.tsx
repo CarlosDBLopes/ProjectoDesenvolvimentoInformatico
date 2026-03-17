@@ -29,7 +29,7 @@ export default function App() {
 
           tabBarStyle: {
             backgroundColor: "#ffffff",
-            height: 90,
+            height: 95,
             paddingBottom: Platform.OS === "ios" ? 30 : 20,
             elevation: 10,
             shadowColor: "#000",
@@ -55,7 +55,7 @@ export default function App() {
           component={Dashboard}
           options={{
             headerTitle: "Início",
-            tabBarLabel: "",
+            tabBarLabel: () => null,
             tabBarIcon: ({ focused }) => (
               <View
                 style={[

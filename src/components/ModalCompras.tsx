@@ -4,7 +4,7 @@ import {
   View,
   Text,
   TextInput,
-  TouchableOpacity,
+  Pressable,
   Platform,
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
@@ -95,9 +95,14 @@ export default function ModalCompras({
                   <Text style={styles.titulo}>
                     {modoEdicao ? "Editar Produto" : "Adicionar à Lista"}
                   </Text>
-                  <TouchableOpacity onPress={limparEFechar}>
+                  <Pressable
+                    onPress={limparEFechar}
+                    style={({ pressed }) => [
+                      pressed && { transform: [{ scale: 0.85 }], opacity: 0.7 },
+                    ]}
+                  >
                     <Ionicons name="close" size={28} color="#888" />
-                  </TouchableOpacity>
+                  </Pressable>
                 </View>
 
                 <Text style={styles.label}>Nome do Produto *</Text>
@@ -118,31 +123,44 @@ export default function ModalCompras({
 
                 <Text style={styles.label}>Quantidade</Text>
                 <View style={styles.zonaQuantidade}>
-                  <TouchableOpacity
-                    style={styles.botaoQtd}
-                    onPress={() => setQuantidade((qtd) => Math.max(1, qtd - 1))}
+                  <Pressable
+                    onPress={() => {
+                      setQuantidade((qtd) => Math.max(1, qtd - 1));
+                    }}
+                    style={({ pressed }) => [
+                      styles.botaoQtd,
+                      pressed && { transform: [{ scale: 0.9 }], opacity: 0.85 },
+                    ]}
                   >
                     <Ionicons name="remove" size={24} color="#333" />
-                  </TouchableOpacity>
+                  </Pressable>
 
                   <Text style={styles.textoQtd}>{quantidade}</Text>
 
-                  <TouchableOpacity
-                    style={styles.botaoQtd}
-                    onPress={() => setQuantidade((qtd) => qtd + 1)}
+                  <Pressable
+                    onPress={() => {
+                      setQuantidade((qtd) => Math.max(1, qtd + 1));
+                    }}
+                    style={({ pressed }) => [
+                      styles.botaoQtd,
+                      pressed && { transform: [{ scale: 0.9 }], opacity: 0.85 },
+                    ]}
                   >
                     <Ionicons name="add" size={24} color="#333" />
-                  </TouchableOpacity>
+                  </Pressable>
                 </View>
 
-                <TouchableOpacity
-                  style={styles.botaoGuardar}
+                <Pressable
                   onPress={lidarComGuardar}
+                  style={({ pressed }) => [
+                    styles.botaoGuardar,
+                    pressed && { transform: [{ scale: 0.96 }], opacity: 0.85 },
+                  ]}
                 >
                   <Text style={styles.textoBotaoGuardar}>
                     {modoEdicao ? "Guardar Alterações" : "Adicionar à Lista"}
                   </Text>
-                </TouchableOpacity>
+                </Pressable>
               </View>
             </TouchableWithoutFeedback>
           </View>

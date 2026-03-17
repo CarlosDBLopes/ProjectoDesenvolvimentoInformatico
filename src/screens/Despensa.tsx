@@ -5,6 +5,7 @@ import {
   TextInput,
   FlatList,
   TouchableOpacity,
+  Pressable,
   Image,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
@@ -195,15 +196,19 @@ export default function Despensa() {
             onChangeText={(texto) => setPesquisa(texto)}
           />
         </View>
-        <TouchableOpacity
-          style={styles.botaoAdicionar}
+
+        <Pressable
           onPress={() => {
             setProdutoEditando(null);
             setModalVisivel(true);
           }}
+          style={({ pressed }) => [
+            styles.botaoAdicionar,
+            pressed && { transform: [{ scale: 0.9 }], opacity: 0.85 },
+          ]}
         >
           <Ionicons name="add" size={28} color="#fff" />
-        </TouchableOpacity>
+        </Pressable>
       </View>
 
       <View style={styles.cabecalhoTabela}>

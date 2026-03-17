@@ -6,7 +6,7 @@ export const styles = StyleSheet.create({
     backgroundColor: "#f8f9fa",
   },
   zonaTopo: {
-    paddingTop: 50,
+    paddingTop: 40,
     paddingBottom: 10,
     paddingHorizontal: 20,
     alignItems: "center",
@@ -27,7 +27,7 @@ export const styles = StyleSheet.create({
   },
   zonaGrafico: {
     alignItems: "center",
-    marginTop: 50,
+    marginTop: 40,
   },
   graficoFundo: {
     backgroundColor: "#fff",

@@ -88,7 +88,7 @@ export default function Dashboard() {
               cx={75}
               cy={75}
               r={65}
-              stroke="#4caf50"
+              stroke="#2e7d32"
               strokeWidth={12}
               fill="none"
               strokeDasharray={circunferencia}
@@ -118,7 +118,7 @@ export default function Dashboard() {
             showsVerticalScrollIndicator={true}
           >
             {produtosAmarelos.length === 0 ? (
-              <Text style={styles.listaVazia}>Tudo limpo!</Text>
+              <Text style={styles.listaVazia}>Nada a expirar!</Text>
             ) : (
               produtosAmarelos.map((item) => (
                 <View key={item.id} style={styles.itemLista}>
@@ -142,7 +142,7 @@ export default function Dashboard() {
             showsVerticalScrollIndicator={true}
           >
             {produtosVermelhos.length === 0 ? (
-              <Text style={styles.listaVazia}>Sem alertas!</Text>
+              <Text style={styles.listaVazia}>Nada expirado!</Text>
             ) : (
               produtosVermelhos.map((item) => (
                 <View key={item.id} style={styles.itemLista}>

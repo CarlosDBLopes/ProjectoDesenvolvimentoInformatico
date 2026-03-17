@@ -3,6 +3,7 @@ import {
   View,
   Text,
   TouchableOpacity,
+  Pressable,
   StyleSheet,
   Modal,
   TouchableWithoutFeedback,
@@ -36,14 +37,22 @@ export default function MenuImagem({
             <View style={styles.caixaMenu}>
               <View style={styles.cabecalhoMenu}>
                 <Text style={styles.tituloMenu}>Adicionar Foto</Text>
-                <TouchableOpacity onPress={aoFechar}>
+                <Pressable
+                  onPress={aoFechar}
+                  style={({ pressed }) => [
+                    pressed && { transform: [{ scale: 0.85 }], opacity: 0.7 },
+                  ]}
+                >
                   <Ionicons name="close" size={24} color="#888" />
-                </TouchableOpacity>
+                </Pressable>
               </View>
 
               <View style={styles.opcoesContainer}>
-                <TouchableOpacity
-                  style={styles.opcaoBotao}
+                <Pressable
+                  style={({ pressed }) => [
+                    styles.opcaoBotao,
+                    pressed && { transform: [{ scale: 0.95 }], opacity: 0.85 },
+                  ]}
                   onPress={aoTirarFoto}
                 >
                   <View
@@ -52,13 +61,16 @@ export default function MenuImagem({
                       { backgroundColor: "#e8f5e9" },
                     ]}
                   >
-                    <Ionicons name="camera-outline" size={30} color="#4caf50" />
+                    <Ionicons name="camera-outline" size={30} color="#2e7d32" />
                   </View>
                   <Text style={styles.opcaoTexto}>Tirar Foto</Text>
-                </TouchableOpacity>
+                </Pressable>
 
-                <TouchableOpacity
-                  style={styles.opcaoBotao}
+                <Pressable
+                  style={({ pressed }) => [
+                    styles.opcaoBotao,
+                    pressed && { transform: [{ scale: 0.95 }], opacity: 0.85 },
+                  ]}
                   onPress={aoEscolherDaGaleria}
                 >
                   <View
@@ -67,10 +79,10 @@ export default function MenuImagem({
                       { backgroundColor: "#e3f2fd" },
                     ]}
                   >
-                    <Ionicons name="image-outline" size={30} color="#2196F3" />
+                    <Ionicons name="image-outline" size={30} color="#2196f3" />
                   </View>
                   <Text style={styles.opcaoTexto}>Escolher da Galeria</Text>
-                </TouchableOpacity>
+                </Pressable>
               </View>
             </View>
           </TouchableWithoutFeedback>

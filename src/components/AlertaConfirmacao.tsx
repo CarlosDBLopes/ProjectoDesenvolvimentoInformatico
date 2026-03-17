@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Modal } from "react-native"; // <-- Adicionámos o Modal
+import { View, Text, Pressable, StyleSheet, Modal } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 interface AlertaConfirmacaoProps {
@@ -39,19 +39,27 @@ export default function AlertaConfirmacao({
           <Text style={styles.mensagem}>{mensagem}</Text>
 
           <View style={styles.botoesContainer}>
-            <TouchableOpacity
-              style={[styles.botao, styles.botaoCancelar]}
+            <Pressable
               onPress={aoCancelar}
+              style={({ pressed }) => [
+                styles.botao,
+                styles.botaoCancelar,
+                pressed && { transform: [{ scale: 0.96 }], opacity: 0.8 },
+              ]}
             >
               <Text style={styles.textoBotaoCancelar}>{textoCancelar}</Text>
-            </TouchableOpacity>
+            </Pressable>
 
-            <TouchableOpacity
-              style={[styles.botao, styles.botaoConfirmar]}
+            <Pressable
               onPress={aoConfirmar}
+              style={({ pressed }) => [
+                styles.botao,
+                styles.botaoConfirmar,
+                pressed && { transform: [{ scale: 0.96 }], opacity: 0.8 },
+              ]}
             >
               <Text style={styles.textoBotaoConfirmar}>{textoConfirmar}</Text>
-            </TouchableOpacity>
+            </Pressable>
           </View>
         </View>
       </View>

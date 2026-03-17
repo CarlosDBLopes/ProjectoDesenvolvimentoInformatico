@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, Pressable, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 interface AlertaProps {
@@ -25,9 +25,15 @@ export default function AlertaPersonalizado({
         <Text style={styles.titulo}>Atenção</Text>
         <Text style={styles.mensagem}>{mensagem}</Text>
 
-        <TouchableOpacity style={styles.botao} onPress={aoFechar}>
+        <Pressable
+          onPress={aoFechar}
+          style={({ pressed }) => [
+            styles.botao,
+            pressed && { transform: [{ scale: 0.96 }], opacity: 0.8 },
+          ]}
+        >
           <Text style={styles.textoBotao}>Entendi</Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     </View>
   );
@@ -75,7 +81,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#2e7d32",
     paddingVertical: 12,
     paddingHorizontal: 35,
-    borderRadius: 25,
+    borderRadius: 12,
     width: "100%",
   },
   textoBotao: {
