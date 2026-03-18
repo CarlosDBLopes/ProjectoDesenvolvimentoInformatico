@@ -1,12 +1,5 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  FlatList,
-  TouchableOpacity,
-  Pressable,
-} from "react-native";
+import { View, Text, TextInput, FlatList, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 import { styles } from "../styles/ComprasStyles";
@@ -120,10 +113,15 @@ export default function Compras() {
     });
 
   const desenharItem = ({ item }: { item: any }) => (
-    <TouchableOpacity
-      style={[styles.cartao, item.comprado && styles.cartaoComprado]}
-      onPress={() => alternarComprado(item.id)}
-      activeOpacity={0.7}
+    <Pressable
+      onPress={() => {
+        alternarComprado(item.id);
+      }}
+      style={({ pressed }) => [
+        styles.cartao,
+        item.comprado && styles.cartaoComprado,
+        pressed && { backgroundColor: "#f1f3f5", transform: [{ scale: 0.98 }] },
+      ]}
     >
       <View style={styles.colCheckbox}>
         <Ionicons
@@ -178,7 +176,7 @@ export default function Compras() {
       >
         <Ionicons name="close" size={24} color="#f44336" />
       </Pressable>
-    </TouchableOpacity>
+    </Pressable>
   );
 
   return (

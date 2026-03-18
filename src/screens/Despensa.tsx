@@ -4,7 +4,6 @@ import {
   Text,
   TextInput,
   FlatList,
-  TouchableOpacity,
   Pressable,
   Image,
 } from "react-native";
@@ -135,12 +134,15 @@ export default function Despensa() {
   };
 
   const desenharCartao = ({ item }: { item: any }) => (
-    <TouchableOpacity
-      style={styles.cartao}
+    <Pressable
       onPress={() => {
         setProdutoEditando(item);
         setModalVisivel(true);
       }}
+      style={({ pressed }) => [
+        styles.cartao,
+        pressed && { backgroundColor: "#f1f3f5", transform: [{ scale: 0.98 }] },
+      ]}
     >
       <View style={styles.colImagem}>
         {item.imagem ? (
@@ -176,7 +178,7 @@ export default function Despensa() {
           ]}
         />
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 
   return (
