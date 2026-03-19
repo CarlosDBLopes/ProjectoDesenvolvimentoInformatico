@@ -6,12 +6,13 @@ import {
   FlatList,
   Pressable,
   Image,
-  Alert,
+  ActivityIndicator,
 } from "react-native";
 import * as FileSystem from "expo-file-system/legacy";
 import { decode } from "base64-arraybuffer";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
+import Toast from "react-native-toast-message";
 
 import { styles } from "../styles/DespensaStyles";
 import ModalDespensa from "../components/ModalDespensa";
@@ -27,21 +28,29 @@ export default function Despensa() {
   const [pesquisa, setPesquisa] = useState("");
   const [produtos, setProdutos] = useState<any[]>([]);
 
+  const [carregando, setCarregando] = useState(true);
+
   const [modalVisivel, setModalVisivel] = useState(false);
   const [produtoEditando, setProdutoEditando] = useState<any>(null);
 
   const importarProdutos = async () => {
+    setCarregando(true);
     const { data, error } = await supabase
       .from("despensa")
       .select("*")
       .order("created_at", { ascending: false });
 
     if (error) {
-      console.error("Erro ao buscar produtos:", error.message);
-      Alert.alert("Erro", "Não foi possível carregar a despensa.");
+      console.error("Erro ao importar produtos:", error.message);
+      Toast.show({
+        type: "error",
+        text1: "Erro",
+        text2: "Não foi possível carregar a despensa.",
+      });
     } else if (data) {
       setProdutos(data);
     }
+    setCarregando(false);
   };
 
   useFocusEffect(
@@ -84,6 +93,7 @@ export default function Despensa() {
     imagem: string | null,
     id?: string,
   ) => {
+    setCarregando(true);
     let imagemFinal = imagem;
 
     if (imagem && imagem.startsWith("file://")) {
@@ -98,10 +108,11 @@ export default function Despensa() {
           .upload(nomeFicheiro, decode(base64), { contentType: "image/jpeg" });
 
         if (uploadError) {
-          Alert.alert(
-            "Aviso",
-            "A imagem não foi guardada, mas o produto será gravado.",
-          );
+          Toast.show({
+            type: "error",
+            text1: "Aviso de Imagem",
+            text2: "A imagem não foi guardada, mas o produto será gravado.",
+          });
         } else {
           const { data: publicData } = supabase.storage
             .from("images")
@@ -143,8 +154,18 @@ export default function Despensa() {
         .eq("id", id);
 
       if (error) {
-        Alert.alert("Erro", "Não foi possível atualizar o produto.");
+        Toast.show({
+          type: "error",
+          text1: "Erro",
+          text2: "Não foi possível atualizar o produto.",
+        });
+        setCarregando(false);
       } else {
+        Toast.show({
+          type: "success",
+          text1: "Sucesso!",
+          text2: "Produto atualizado na despensa.",
+        });
         importarProdutos();
       }
     } else {
@@ -153,20 +174,36 @@ export default function Despensa() {
         .insert([{ nome, marca, quantidade, validade, imagem: imagemFinal }]);
 
       if (error) {
-        Alert.alert("Erro", "Não foi possível guardar o produto.");
+        Toast.show({
+          type: "error",
+          text1: "Erro",
+          text2: "Não foi possível guardar o produto.",
+        });
+        setCarregando(false);
       } else {
+        Toast.show({
+          type: "success",
+          text1: "Sucesso!",
+          text2: "Adicionado à despensa.",
+        });
         importarProdutos();
       }
     }
   };
 
   const removerProduto = async (id: string) => {
+    setCarregando(true);
     const produtoA_Apagar = produtos.find((p) => p.id === id);
 
     const { error } = await supabase.from("despensa").delete().eq("id", id);
 
     if (error) {
-      Alert.alert("Erro", "Não foi possível eliminar o produto.");
+      Toast.show({
+        type: "error",
+        text1: "Erro",
+        text2: "Não foi possível eliminar o produto.",
+      });
+      setCarregando(false);
     } else {
       if (
         produtoA_Apagar &&
@@ -176,9 +213,13 @@ export default function Despensa() {
         const nomeFicheiro = extrairNomeFicheiro(produtoA_Apagar.imagem);
         if (nomeFicheiro) {
           await supabase.storage.from("images").remove([nomeFicheiro]);
-          console.log("Imagem antiga apagada do Storage:", nomeFicheiro);
         }
       }
+      Toast.show({
+        type: "success",
+        text1: "Eliminado",
+        text2: "O produto foi removido da despensa.",
+      });
       importarProdutos();
     }
   };
@@ -291,13 +332,26 @@ export default function Despensa() {
         <Text style={[styles.textoCabecalho, styles.colStatus]}>Estado</Text>
       </View>
 
-      <FlatList
-        data={produtosFiltrados}
-        keyExtractor={(item) => item.id}
-        renderItem={desenharCartao}
-        contentContainerStyle={styles.lista}
-        ListFooterComponent={<View style={{ height: 110 }} />}
-      />
+      {carregando ? (
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            paddingBottom: 150,
+          }}
+        >
+          <ActivityIndicator size="large" color="#2e7d32" />
+        </View>
+      ) : (
+        <FlatList
+          data={produtosFiltrados}
+          keyExtractor={(item) => item.id}
+          renderItem={desenharCartao}
+          contentContainerStyle={styles.lista}
+          ListFooterComponent={<View style={{ height: 110 }} />}
+        />
+      )}
 
       <ModalDespensa
         visivel={modalVisivel}

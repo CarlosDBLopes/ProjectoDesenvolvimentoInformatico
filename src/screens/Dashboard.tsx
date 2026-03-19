@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { View, Text, ScrollView, Image } from "react-native";
+import { View, Text, ScrollView, Image, ActivityIndicator } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import Svg, { Circle } from "react-native-svg";
 
@@ -32,10 +32,12 @@ export default function Dashboard() {
   const nomeUtilizador = "Tiago";
 
   const [produtos, setProdutos] = useState<any[]>([]);
+  const [carregando, setCarregando] = useState(true);
 
   useFocusEffect(
     useCallback(() => {
       const buscarProdutosDaDespensa = async () => {
+        setCarregando(true);
         const { data, error } = await supabase.from("despensa").select("*");
 
         if (error) {
@@ -43,6 +45,7 @@ export default function Dashboard() {
         } else if (data) {
           setProdutos(data);
         }
+        setCarregando(false);
       };
 
       buscarProdutosDaDespensa();
@@ -80,89 +83,93 @@ export default function Dashboard() {
         </Text>
       </View>
 
-      <View style={styles.zonaGrafico}>
-        <View style={styles.graficoFundo}>
-          <Svg width={150} height={150}>
-            <Circle
-              cx={75}
-              cy={75}
-              r={65}
-              stroke="#f1f3f5"
-              strokeWidth={12}
-              fill="none"
-            />
-
-            <Circle
-              cx={75}
-              cy={75}
-              r={65}
-              stroke="#2e7d32"
-              strokeWidth={12}
-              fill="none"
-              strokeDasharray={circunferencia}
-              strokeDashoffset={preenchimento}
-              strokeLinecap="round"
-              transform="rotate(-90 75 75)"
-            />
-          </Svg>
-
-          <Image
-            source={require("../../assets/logo.png")}
-            style={styles.logoCentro}
-          />
+      {carregando ? (
+        <View style={{ marginTop: 200, alignItems: "center" }}>
+          <ActivityIndicator size="large" color="#2e7d32" />
         </View>
-      </View>
+      ) : (
+        <>
+          <View style={styles.zonaGrafico}>
+            <View style={styles.graficoFundo}>
+              <Svg width={150} height={150}>
+                <Circle
+                  cx={75}
+                  cy={75}
+                  r={65}
+                  stroke="#f1f3f5"
+                  strokeWidth={12}
+                  fill="none"
+                />
 
-      <Text style={styles.textoPercentagem}>
-        Tem {percentagemVerde}% dos itens{"\n"}dentro do prazo!
-      </Text>
+                <Circle
+                  cx={75}
+                  cy={75}
+                  r={65}
+                  stroke="#2e7d32"
+                  strokeWidth={12}
+                  fill="none"
+                  strokeDasharray={circunferencia}
+                  strokeDashoffset={preenchimento}
+                  strokeLinecap="round"
+                  transform="rotate(-90 75 75)"
+                />
+              </Svg>
 
-      <View style={styles.tabelasContainer}>
-        <View style={styles.colunaTabela}>
-          <Text style={styles.cabecalhoAmarelo}>A Expirar</Text>
-          <ScrollView
-            style={styles.listaContainer}
-            nestedScrollEnabled={true}
-            showsVerticalScrollIndicator={true}
-          >
-            {produtosAmarelos.length === 0 ? (
-              <Text style={styles.listaVazia}>Nada a expirar!</Text>
-            ) : (
-              produtosAmarelos.map((item) => (
-                <View key={item.id} style={styles.itemLista}>
-                  <Text style={styles.nomeItem} numberOfLines={1}>
-                    {item.nome}
-                  </Text>
-                  <Text style={styles.diasItem}>
-                    {item.validade.slice(0, 5)}
-                  </Text>
-                </View>
-              ))
-            )}
-          </ScrollView>
-        </View>
+              <Image
+                source={require("../../assets/logo.png")}
+                style={styles.logoCentro}
+              />
+            </View>
+          </View>
 
-        <View style={styles.colunaTabela}>
-          <Text style={styles.cabecalhoVermelho}>Expirados</Text>
-          <ScrollView
-            style={styles.listaContainer}
-            nestedScrollEnabled={true}
-            showsVerticalScrollIndicator={true}
-          >
-            {produtosVermelhos.length === 0 ? (
-              <Text style={styles.listaVazia}>Nada expirado!</Text>
-            ) : (
-              produtosVermelhos.map((item) => (
-                <View key={item.id} style={styles.itemLista}>
-                  <Text style={styles.nomeItem} numberOfLines={1}>
-                    {item.nome}
-                  </Text>
-                </View>
-              ))
-            )}
-          </ScrollView>
-        </View>
-      </View>
+          <Text style={styles.textoPercentagem}>
+            Tem {percentagemVerde}% dos itens{"\n"}dentro do prazo!
+          </Text>
+
+          <View style={styles.tabelasContainer}>
+            <View style={styles.colunaTabela}>
+              <Text style={styles.cabecalhoAmarelo}>A Expirar</Text>
+              <ScrollView
+                style={styles.listaContainer}
+                nestedScrollEnabled={true}
+                showsVerticalScrollIndicator={true}
+              >
+                {produtosAmarelos.length === 0 ? (
+                  <Text style={styles.listaVazia}>Nada a expirar!</Text>
+                ) : (
+                  produtosAmarelos.map((item) => (
+                    <View key={item.id} style={styles.itemLista}>
+                      <Text style={styles.nomeItem}>{item.nome}</Text>
+                      <Text style={styles.diasItem}>
+                        {item.validade.slice(0, 5)}
+                      </Text>
+                    </View>
+                  ))
+                )}
+              </ScrollView>
+            </View>
+
+            <View style={styles.colunaTabela}>
+              <Text style={styles.cabecalhoVermelho}>Expirados</Text>
+              <ScrollView
+                style={styles.listaContainer}
+                nestedScrollEnabled={true}
+                showsVerticalScrollIndicator={true}
+              >
+                {produtosVermelhos.length === 0 ? (
+                  <Text style={styles.listaVazia}>Nada expirado!</Text>
+                ) : (
+                  produtosVermelhos.map((item) => (
+                    <View key={item.id} style={styles.itemLista}>
+                      <Text style={styles.nomeItem}>{item.nome}</Text>
+                    </View>
+                  ))
+                )}
+              </ScrollView>
+            </View>
+          </View>
+        </>
+      )}
     </ScrollView>
   );
 }

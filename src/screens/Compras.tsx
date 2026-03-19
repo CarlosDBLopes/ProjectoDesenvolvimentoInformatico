@@ -5,10 +5,11 @@ import {
   TextInput,
   FlatList,
   Pressable,
-  Alert,
+  ActivityIndicator,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
+import Toast from "react-native-toast-message";
 
 import { styles } from "../styles/ComprasStyles";
 import ModalCompras from "../components/ModalCompras";
@@ -25,18 +26,27 @@ export default function Compras() {
 
   const [listaCompras, setListaCompras] = useState<any[]>([]);
 
-  const importarCompras = async () => {
+  const [carregando, setCarregando] = useState(true);
+
+  const importarCompras = async (mostrarSpinner = true) => {
+    if (mostrarSpinner) setCarregando(true);
+
     const { data, error } = await supabase
       .from("compras")
       .select("*")
       .order("created_at", { ascending: false });
 
     if (error) {
-      console.error("Erro ao importar compras:", error.message);
-      Alert.alert("Erro", "Não foi possível carregar a lista de compras.");
+      console.error("Erro ao importar lista de compras:", error.message);
+      Toast.show({
+        type: "error",
+        text1: "Erro",
+        text2: "Não foi possível carregar a lista de compras.",
+      });
     } else if (data) {
       setListaCompras(data);
     }
+    if (mostrarSpinner) setCarregando(false);
   };
 
   useFocusEffect(
@@ -57,20 +67,50 @@ export default function Compras() {
         .update({ nome, marca, quantidade })
         .eq("id", id);
 
-      if (error) Alert.alert("Erro", "Não foi possível atualizar o produto.");
-      else importarCompras();
+      if (error)
+        Toast.show({
+          type: "error",
+          text1: "Erro",
+          text2: "Não foi possível atualizar o produto.",
+        });
+      else {
+        Toast.show({
+          type: "success",
+          text1: "Sucesso!",
+          text2: "Produto atualizado.",
+        });
+        importarCompras();
+      }
     } else {
       const { error } = await supabase
         .from("compras")
         .insert([{ nome, marca, quantidade, comprado: false }]);
 
-      if (error) Alert.alert("Erro", "Não foi possível adicionar à lista.");
-      else importarCompras();
+      if (error) {
+        Toast.show({
+          type: "error",
+          text1: "Erro",
+          text2: "Não foi possível adicionar à lista.",
+        });
+      } else {
+        Toast.show({
+          type: "success",
+          text1: "Sucesso!",
+          text2: "Adicionado à lista de compras.",
+        });
+        importarCompras();
+      }
     }
   };
 
   const alternarComprado = async (id: string, estadoAtual: boolean) => {
     const novoEstado = !estadoAtual;
+
+    setListaCompras((listaAtual) =>
+      listaAtual.map((item) =>
+        item.id === id ? { ...item, comprado: novoEstado } : item,
+      ),
+    );
 
     const { error } = await supabase
       .from("compras")
@@ -78,9 +118,12 @@ export default function Compras() {
       .eq("id", id);
 
     if (error) {
-      Alert.alert("Erro", "Não foi possível alterar o estado do produto.");
-    } else {
-      importarCompras();
+      Toast.show({
+        type: "error",
+        text1: "Erro",
+        text2: "Não foi possível alterar o estado.",
+      });
+      importarCompras(false);
     }
   };
 
@@ -88,8 +131,17 @@ export default function Compras() {
     const { error } = await supabase.from("compras").delete().eq("id", id);
 
     if (error) {
-      Alert.alert("Erro", "Não foi possível eliminar da lista.");
+      Toast.show({
+        type: "error",
+        text1: "Erro",
+        text2: "Não foi possível eliminar da lista.",
+      });
     } else {
+      Toast.show({
+        type: "success",
+        text1: "Eliminado",
+        text2: "O item foi removido da lista.",
+      });
       importarCompras();
     }
   };
@@ -229,13 +281,26 @@ export default function Compras() {
         <View style={styles.colDelete} />
       </View>
 
-      <FlatList
-        data={itensParaMostrar}
-        keyExtractor={(item) => item.id}
-        renderItem={desenharItem}
-        contentContainerStyle={styles.lista}
-        ListFooterComponent={<View style={{ height: 110 }} />}
-      />
+      {carregando ? (
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            paddingBottom: 150,
+          }}
+        >
+          <ActivityIndicator size="large" color="#2e7d32" />
+        </View>
+      ) : (
+        <FlatList
+          data={itensParaMostrar}
+          keyExtractor={(item) => item.id}
+          renderItem={desenharItem}
+          contentContainerStyle={styles.lista}
+          ListFooterComponent={<View style={{ height: 110 }} />}
+        />
+      )}
 
       <ModalCompras
         visivel={modalVisivel}

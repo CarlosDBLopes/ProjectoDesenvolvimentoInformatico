@@ -64,6 +64,7 @@ export const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingBottom: 40,
     marginTop: 15,
+    height: 210,
   },
   colunaTabela: {
     width: "48%",
@@ -110,6 +111,7 @@ export const styles = StyleSheet.create({
     fontSize: 14,
     color: "#333",
     flex: 1,
+    marginRight: 6,
   },
   diasItem: {
     fontSize: 12,
