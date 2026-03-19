@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -6,47 +6,49 @@ import {
   FlatList,
   Pressable,
   Image,
+  Alert,
 } from "react-native";
+import * as FileSystem from "expo-file-system/legacy";
+import { decode } from "base64-arraybuffer";
 import { Ionicons } from "@expo/vector-icons";
+import { useFocusEffect } from "@react-navigation/native";
 
 import { styles } from "../styles/DespensaStyles";
 import ModalDespensa from "../components/ModalDespensa";
+import { supabase } from "../services/supabase";
+
+const extrairNomeFicheiro = (url: string) => {
+  if (!url) return null;
+  const partes = url.split("/");
+  return partes[partes.length - 1];
+};
 
 export default function Despensa() {
   const [pesquisa, setPesquisa] = useState("");
-  const [produtos, setProdutos] = useState([
-    {
-      id: "1",
-      nome: "Arroz Agulha",
-      marca: "Cigala",
-      quantidade: 2,
-      status: "verde",
-    },
-    {
-      id: "2",
-      nome: "Leite Meio Gordo",
-      marca: "Mimosa",
-      quantidade: 1,
-      status: "amarelo",
-    },
-    {
-      id: "3",
-      nome: "Iogurte Natural",
-      marca: "Danone",
-      quantidade: 4,
-      status: "vermelho",
-    },
-    {
-      id: "4",
-      nome: "Atum em Lata",
-      marca: "Bom Petisco",
-      quantidade: 5,
-      status: "verde",
-    },
-  ]);
+  const [produtos, setProdutos] = useState<any[]>([]);
 
   const [modalVisivel, setModalVisivel] = useState(false);
   const [produtoEditando, setProdutoEditando] = useState<any>(null);
+
+  const importarProdutos = async () => {
+    const { data, error } = await supabase
+      .from("despensa")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("Erro ao buscar produtos:", error.message);
+      Alert.alert("Erro", "Não foi possível carregar a despensa.");
+    } else if (data) {
+      setProdutos(data);
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      importarProdutos();
+    }, []),
+  );
 
   const calcularStatusValidade = (validade?: string) => {
     if (!validade || validade.length < 10) return "verde";
@@ -74,7 +76,7 @@ export default function Despensa() {
     }
   };
 
-  const guardarProduto = (
+  const guardarProduto = async (
     nome: string,
     marca: string,
     quantidade: number,
@@ -82,48 +84,110 @@ export default function Despensa() {
     imagem: string | null,
     id?: string,
   ) => {
-    const novoStatus = calcularStatusValidade(validade);
+    let imagemFinal = imagem;
+
+    if (imagem && imagem.startsWith("file://")) {
+      try {
+        const base64 = await FileSystem.readAsStringAsync(imagem, {
+          encoding: "base64",
+        });
+        const nomeFicheiro = `${new Date().getTime()}.jpg`;
+
+        const { error: uploadError } = await supabase.storage
+          .from("images")
+          .upload(nomeFicheiro, decode(base64), { contentType: "image/jpeg" });
+
+        if (uploadError) {
+          Alert.alert(
+            "Aviso",
+            "A imagem não foi guardada, mas o produto será gravado.",
+          );
+        } else {
+          const { data: publicData } = supabase.storage
+            .from("images")
+            .getPublicUrl(nomeFicheiro);
+
+          imagemFinal = publicData.publicUrl;
+
+          if (id) {
+            const produtoAntigo = produtos.find((p) => p.id === id);
+            if (
+              produtoAntigo &&
+              produtoAntigo.imagem &&
+              produtoAntigo.imagem.startsWith("http")
+            ) {
+              const nomeFicheiroAntigo = extrairNomeFicheiro(
+                produtoAntigo.imagem,
+              );
+              if (nomeFicheiroAntigo) {
+                await supabase.storage
+                  .from("images")
+                  .remove([nomeFicheiroAntigo]);
+                console.log(
+                  "Substituição: Imagem antiga apagada:",
+                  nomeFicheiroAntigo,
+                );
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Erro ao processar imagem:", error);
+      }
+    }
 
     if (id) {
-      setProdutos((produtosAtuais) =>
-        produtosAtuais.map((produto) =>
-          produto.id === id
-            ? {
-                ...produto,
-                nome,
-                marca,
-                quantidade,
-                validade,
-                imagem,
-                status: novoStatus,
-              }
-            : produto,
-        ),
-      );
+      const { error } = await supabase
+        .from("despensa")
+        .update({ nome, marca, quantidade, validade, imagem: imagemFinal })
+        .eq("id", id);
+
+      if (error) {
+        Alert.alert("Erro", "Não foi possível atualizar o produto.");
+      } else {
+        importarProdutos();
+      }
     } else {
-      const novoProduto = {
-        id: Math.random().toString(),
-        nome,
-        marca,
-        quantidade,
-        validade,
-        imagem,
-        status: novoStatus,
-      };
-      setProdutos((produtosAtuais) => [novoProduto, ...produtosAtuais]);
+      const { error } = await supabase
+        .from("despensa")
+        .insert([{ nome, marca, quantidade, validade, imagem: imagemFinal }]);
+
+      if (error) {
+        Alert.alert("Erro", "Não foi possível guardar o produto.");
+      } else {
+        importarProdutos();
+      }
     }
   };
 
-  const removerProduto = (id: string) => {
-    setProdutos((produtosAtuais) =>
-      produtosAtuais.filter((produto) => produto.id !== id),
-    );
+  const removerProduto = async (id: string) => {
+    const produtoA_Apagar = produtos.find((p) => p.id === id);
+
+    const { error } = await supabase.from("despensa").delete().eq("id", id);
+
+    if (error) {
+      Alert.alert("Erro", "Não foi possível eliminar o produto.");
+    } else {
+      if (
+        produtoA_Apagar &&
+        produtoA_Apagar.imagem &&
+        produtoA_Apagar.imagem.startsWith("http")
+      ) {
+        const nomeFicheiro = extrairNomeFicheiro(produtoA_Apagar.imagem);
+        if (nomeFicheiro) {
+          await supabase.storage.from("images").remove([nomeFicheiro]);
+          console.log("Imagem antiga apagada do Storage:", nomeFicheiro);
+        }
+      }
+      importarProdutos();
+    }
   };
 
   const produtosFiltrados = produtos.filter(
     (produto) =>
       produto.nome.toLowerCase().includes(pesquisa.toLowerCase()) ||
-      produto.marca.toLowerCase().includes(pesquisa.toLowerCase()),
+      (produto.marca &&
+        produto.marca.toLowerCase().includes(pesquisa.toLowerCase())),
   );
 
   const getCorStatus = (status: string) => {
@@ -133,53 +197,60 @@ export default function Despensa() {
     return "#ccc";
   };
 
-  const desenharCartao = ({ item }: { item: any }) => (
-    <Pressable
-      onPress={() => {
-        setProdutoEditando(item);
-        setModalVisivel(true);
-      }}
-      style={({ pressed }) => [
-        styles.cartao,
-        pressed && { backgroundColor: "#f1f3f5", transform: [{ scale: 0.98 }] },
-      ]}
-    >
-      <View style={styles.colImagem}>
-        {item.imagem ? (
-          <Image
-            source={{ uri: item.imagem }}
-            style={styles.caixaImagemPlaceholder}
+  const desenharCartao = ({ item }: { item: any }) => {
+    const novoStatus = calcularStatusValidade(item.validade);
+
+    return (
+      <Pressable
+        onPress={() => {
+          setProdutoEditando(item);
+          setModalVisivel(true);
+        }}
+        style={({ pressed }) => [
+          styles.cartao,
+          pressed && {
+            backgroundColor: "#f1f3f5",
+            transform: [{ scale: 0.98 }],
+          },
+        ]}
+      >
+        <View style={styles.colImagem}>
+          {item.imagem ? (
+            <Image
+              source={{ uri: item.imagem }}
+              style={styles.caixaImagemPlaceholder}
+            />
+          ) : (
+            <View style={styles.caixaImagemPlaceholder}>
+              <Ionicons name="image-outline" size={20} color="#aaa" />
+            </View>
+          )}
+        </View>
+
+        <View style={styles.colNome}>
+          <Text style={styles.nomeProduto} numberOfLines={1}>
+            {item.nome}
+          </Text>
+          <Text style={styles.marcaProduto} numberOfLines={1}>
+            {item.marca}
+          </Text>
+        </View>
+
+        <View style={styles.colQtd}>
+          <Text style={styles.textoQtd}>{item.quantidade}</Text>
+        </View>
+
+        <View style={styles.colStatus}>
+          <View
+            style={[
+              styles.bolinhaStatus,
+              { backgroundColor: getCorStatus(novoStatus) },
+            ]}
           />
-        ) : (
-          <View style={styles.caixaImagemPlaceholder}>
-            <Ionicons name="image-outline" size={20} color="#aaa" />
-          </View>
-        )}
-      </View>
-
-      <View style={styles.colNome}>
-        <Text style={styles.nomeProduto} numberOfLines={1}>
-          {item.nome}
-        </Text>
-        <Text style={styles.marcaProduto} numberOfLines={1}>
-          {item.marca}
-        </Text>
-      </View>
-
-      <View style={styles.colQtd}>
-        <Text style={styles.textoQtd}>{item.quantidade}</Text>
-      </View>
-
-      <View style={styles.colStatus}>
-        <View
-          style={[
-            styles.bolinhaStatus,
-            { backgroundColor: getCorStatus(item.status) },
-          ]}
-        />
-      </View>
-    </Pressable>
-  );
+        </View>
+      </Pressable>
+    );
+  };
 
   return (
     <View style={styles.container}>

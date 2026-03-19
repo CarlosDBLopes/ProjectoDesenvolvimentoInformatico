@@ -1,7 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { View, Text, ScrollView, Image } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import Svg, { Circle } from "react-native-svg";
+
 import { styles } from "../styles/DashboardStyles";
+import { supabase } from "../services/supabase";
 
 const calcularStatusValidade = (validade: string) => {
   if (!validade || validade.length < 10) return "verde";
@@ -28,18 +31,23 @@ const calcularStatusValidade = (validade: string) => {
 export default function Dashboard() {
   const nomeUtilizador = "Tiago";
 
-  const [produtos] = useState([
-    { id: "1", nome: "Leite", validade: "10/03/2026" },
-    { id: "2", nome: "Iogurte", validade: "14/03/2026" },
-    { id: "3", nome: "Fiambre", validade: "15/03/2026" },
-    { id: "4", nome: "Arroz", validade: "10/12/2026" },
-    { id: "5", nome: "Massa", validade: "15/05/2026" },
-    { id: "6", nome: "Manteiga", validade: "01/03/2026" },
-    { id: "7", nome: "Azeite", validade: "20/08/2026" },
-    { id: "8", nome: "Agua", validade: "20/02/2026" },
-    { id: "9", nome: "Queijo", validade: "20/01/2026" },
-    { id: "10", nome: "Mortadela", validade: "20/02/2026" },
-  ]);
+  const [produtos, setProdutos] = useState<any[]>([]);
+
+  useFocusEffect(
+    useCallback(() => {
+      const buscarProdutosDaDespensa = async () => {
+        const { data, error } = await supabase.from("despensa").select("*");
+
+        if (error) {
+          console.error("Erro ao importar produtos:", error.message);
+        } else if (data) {
+          setProdutos(data);
+        }
+      };
+
+      buscarProdutosDaDespensa();
+    }, []),
+  );
 
   const produtosVerdes = produtos.filter(
     (p) => calcularStatusValidade(p.validade) === "verde",
@@ -68,7 +76,7 @@ export default function Dashboard() {
         <Text style={styles.textoAlertas}>
           Tem{" "}
           <Text style={styles.alertaDestaque}>{produtosVermelhos.length}</Text>{" "}
-          alertas hoje
+          alerta(s) hoje
         </Text>
       </View>
 

@@ -1,10 +1,19 @@
-import React, { useState } from "react";
-import { View, Text, TextInput, FlatList, Pressable } from "react-native";
+import React, { useState, useCallback } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  FlatList,
+  Pressable,
+  Alert,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useFocusEffect } from "@react-navigation/native";
 
 import { styles } from "../styles/ComprasStyles";
 import ModalCompras from "../components/ModalCompras";
 import AlertaConfirmacao from "../components/AlertaConfirmacao";
+import { supabase } from "../services/supabase";
 
 export default function Compras() {
   const [pesquisa, setPesquisa] = useState("");
@@ -14,75 +23,75 @@ export default function Compras() {
   const [confirmacaoVisivel, setConfirmacaoVisivel] = useState(false);
   const [produtoParaRemover, setProdutoParaRemover] = useState<any>(null);
 
-  const guardarProduto = (
+  const [listaCompras, setListaCompras] = useState<any[]>([]);
+
+  const importarCompras = async () => {
+    const { data, error } = await supabase
+      .from("compras")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("Erro ao importar compras:", error.message);
+      Alert.alert("Erro", "Não foi possível carregar a lista de compras.");
+    } else if (data) {
+      setListaCompras(data);
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      importarCompras();
+    }, []),
+  );
+
+  const guardarProduto = async (
     nome: string,
     marca: string,
     quantidade: number,
     id?: string,
   ) => {
     if (id) {
-      setListaCompras((listaAtual) =>
-        listaAtual.map((item) =>
-          item.id === id ? { ...item, nome, marca, quantidade } : item,
-        ),
-      );
+      const { error } = await supabase
+        .from("compras")
+        .update({ nome, marca, quantidade })
+        .eq("id", id);
+
+      if (error) Alert.alert("Erro", "Não foi possível atualizar o produto.");
+      else importarCompras();
     } else {
-      const novoProduto = {
-        id: Math.random().toString(),
-        nome: nome,
-        marca: marca,
-        quantidade: quantidade,
-        comprado: false,
-      };
-      setListaCompras((listaAtual) => [novoProduto, ...listaAtual]);
+      const { error } = await supabase
+        .from("compras")
+        .insert([{ nome, marca, quantidade, comprado: false }]);
+
+      if (error) Alert.alert("Erro", "Não foi possível adicionar à lista.");
+      else importarCompras();
     }
   };
-  const [listaCompras, setListaCompras] = useState([
-    {
-      id: "1",
-      nome: "Azeite",
-      marca: "Gallo",
-      quantidade: 1,
-      comprado: false,
-    },
-    {
-      id: "2",
-      nome: "Detergente Roupa",
-      marca: "Skip",
-      quantidade: 1,
-      comprado: false,
-    },
-    {
-      id: "3",
-      nome: "Pasta de Dentes",
-      marca: "Colgate",
-      quantidade: 2,
-      comprado: false,
-    },
-    {
-      id: "4",
-      nome: "Bananas",
-      marca: "Madeira",
-      quantidade: 6,
-      comprado: true,
-    },
-  ]);
 
-  const alternarComprado = (id: string) => {
-    setListaCompras((listaAtual) =>
-      listaAtual.map((item) => {
-        if (item.id === id) {
-          return { ...item, comprado: !item.comprado };
-        }
-        return item;
-      }),
-    );
+  const alternarComprado = async (id: string, estadoAtual: boolean) => {
+    const novoEstado = !estadoAtual;
+
+    const { error } = await supabase
+      .from("compras")
+      .update({ comprado: novoEstado })
+      .eq("id", id);
+
+    if (error) {
+      Alert.alert("Erro", "Não foi possível alterar o estado do produto.");
+    } else {
+      importarCompras();
+    }
   };
 
-  const removerItem = (id: string) => {
-    setListaCompras((listaAtual) =>
-      listaAtual.filter((item) => item.id !== id),
-    );
+  const removerItem = async (id: string) => {
+    const { error } = await supabase.from("compras").delete().eq("id", id);
+
+    if (error) {
+      Alert.alert("Erro", "Não foi possível eliminar da lista.");
+    } else {
+      importarCompras();
+    }
   };
 
   const pedirConfirmacaoRemocao = (itemSelecionado: any) => {
@@ -105,7 +114,8 @@ export default function Compras() {
     .filter(
       (item) =>
         item.nome.toLowerCase().includes(pesquisa.toLowerCase()) ||
-        item.marca.toLowerCase().includes(pesquisa.toLowerCase()),
+        (item.marca &&
+          item.marca.toLowerCase().includes(pesquisa.toLowerCase())), // <-- PESQUISA PELA MARCA
     )
     .sort((a, b) => {
       if (a.comprado === b.comprado) return 0;
@@ -115,7 +125,7 @@ export default function Compras() {
   const desenharItem = ({ item }: { item: any }) => (
     <Pressable
       onPress={() => {
-        alternarComprado(item.id);
+        alternarComprado(item.id, item.comprado);
       }}
       style={({ pressed }) => [
         styles.cartao,
