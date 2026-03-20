@@ -27,7 +27,7 @@ export const styles = StyleSheet.create({
   },
   zonaGrafico: {
     alignItems: "center",
-    marginTop: 40,
+    marginTop: 50,
   },
   graficoFundo: {
     backgroundColor: "#fff",
@@ -40,8 +40,8 @@ export const styles = StyleSheet.create({
     shadowRadius: 5,
     justifyContent: "center",
     alignItems: "center",
-    width: 170,
-    height: 170,
+    width: 160,
+    height: 160,
   },
   logoCentro: {
     position: "absolute",
@@ -56,7 +56,7 @@ export const styles = StyleSheet.create({
     color: "#333",
     textAlign: "center",
     marginTop: 20,
-    marginBottom: 50,
+    marginBottom: 55,
   },
   tabelasContainer: {
     flexDirection: "row",

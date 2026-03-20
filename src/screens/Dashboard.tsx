@@ -68,7 +68,7 @@ export default function Dashboard() {
       ? 0
       : Math.round((produtosVerdes.length / totalProdutos) * 100);
 
-  const circunferencia = 408;
+  const circunferencia = 540;
   const preenchimento =
     circunferencia - (circunferencia * percentagemVerde) / 100;
 
@@ -91,32 +91,32 @@ export default function Dashboard() {
         <>
           <View style={styles.zonaGrafico}>
             <View style={styles.graficoFundo}>
-              <Svg width={150} height={150}>
+              <Svg width={180} height={180}>
                 <Circle
-                  cx={75}
-                  cy={75}
-                  r={65}
+                  cx={90}
+                  cy={90}
+                  r={74}
                   stroke="#f1f3f5"
-                  strokeWidth={12}
+                  strokeWidth={14}
                   fill="none"
                 />
 
                 <Circle
-                  cx={75}
-                  cy={75}
-                  r={65}
+                  cx={90}
+                  cy={90}
+                  r={74}
                   stroke="#2e7d32"
-                  strokeWidth={12}
+                  strokeWidth={14}
                   fill="none"
                   strokeDasharray={circunferencia}
                   strokeDashoffset={preenchimento}
                   strokeLinecap="round"
-                  transform="rotate(-90 75 75)"
+                  transform="rotate(-90 90 90)"
                 />
               </Svg>
 
               <Image
-                source={require("../../assets/logo.png")}
+                source={require("../assets/icon.png")}
                 style={styles.logoCentro}
               />
             </View>
