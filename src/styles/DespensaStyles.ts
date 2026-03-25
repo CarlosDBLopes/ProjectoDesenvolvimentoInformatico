@@ -120,9 +120,4 @@ export const styles = StyleSheet.create({
     height: 14,
     borderRadius: 7,
   },
-  titulo: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#2e7d32",
-  },
 });

@@ -41,7 +41,6 @@ export default function Despensa() {
       .order("created_at", { ascending: false });
 
     if (error) {
-      console.error("Erro ao importar produtos:", error.message);
       Toast.show({
         type: "error",
         text1: "Erro",
@@ -97,53 +96,45 @@ export default function Despensa() {
     let imagemFinal = imagem;
 
     if (imagem && imagem.startsWith("file://")) {
-      try {
-        const base64 = await FileSystem.readAsStringAsync(imagem, {
-          encoding: "base64",
+      const base64 = await FileSystem.readAsStringAsync(imagem, {
+        encoding: "base64",
+      });
+      const nomeFicheiro = `${new Date().getTime()}.jpg`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("images")
+        .upload(nomeFicheiro, decode(base64), { contentType: "image/jpeg" });
+
+      if (uploadError) {
+        Toast.show({
+          type: "error",
+          text1: "Aviso de Imagem",
+          text2: "A imagem não foi guardada, mas o produto será gravado.",
         });
-        const nomeFicheiro = `${new Date().getTime()}.jpg`;
-
-        const { error: uploadError } = await supabase.storage
+      } else {
+        const { data: publicData } = supabase.storage
           .from("images")
-          .upload(nomeFicheiro, decode(base64), { contentType: "image/jpeg" });
+          .getPublicUrl(nomeFicheiro);
 
-        if (uploadError) {
-          Toast.show({
-            type: "error",
-            text1: "Aviso de Imagem",
-            text2: "A imagem não foi guardada, mas o produto será gravado.",
-          });
-        } else {
-          const { data: publicData } = supabase.storage
-            .from("images")
-            .getPublicUrl(nomeFicheiro);
+        imagemFinal = publicData.publicUrl;
 
-          imagemFinal = publicData.publicUrl;
-
-          if (id) {
-            const produtoAntigo = produtos.find((p) => p.id === id);
-            if (
-              produtoAntigo &&
-              produtoAntigo.imagem &&
-              produtoAntigo.imagem.startsWith("http")
-            ) {
-              const nomeFicheiroAntigo = extrairNomeFicheiro(
-                produtoAntigo.imagem,
-              );
-              if (nomeFicheiroAntigo) {
-                await supabase.storage
-                  .from("images")
-                  .remove([nomeFicheiroAntigo]);
-                console.log(
-                  "Substituição: Imagem antiga apagada:",
-                  nomeFicheiroAntigo,
-                );
-              }
+        if (id) {
+          const produtoAntigo = produtos.find((p) => p.id === id);
+          if (
+            produtoAntigo &&
+            produtoAntigo.imagem &&
+            produtoAntigo.imagem.startsWith("http")
+          ) {
+            const nomeFicheiroAntigo = extrairNomeFicheiro(
+              produtoAntigo.imagem,
+            );
+            if (nomeFicheiroAntigo) {
+              await supabase.storage
+                .from("images")
+                .remove([nomeFicheiroAntigo]);
             }
           }
         }
-      } catch (error) {
-        console.error("Erro ao processar imagem:", error);
       }
     }
 

@@ -13,7 +13,6 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 
 import { styles } from "../styles/ModalComprasStyles";
-import AlertaPersonalizado from "./AlertaPersonalizado";
 
 interface ModalComprasProps {
   visivel: boolean;
@@ -41,17 +40,20 @@ export default function ModalCompras({
   const [nome, setNome] = useState("");
   const [marca, setMarca] = useState("");
   const [quantidade, setQuantidade] = useState(1);
-  const [alertaVisivel, setAlertaVisivel] = useState(false);
+
+  const [nomeErro, setNomeErro] = useState("");
 
   useEffect(() => {
     if (produtoEdicao) {
       setNome(produtoEdicao.nome);
       setMarca(produtoEdicao.marca || "");
       setQuantidade(produtoEdicao.quantidade);
+      setNomeErro("");
     } else {
       setNome("");
       setMarca("");
       setQuantidade(1);
+      setNomeErro("");
     }
   }, [produtoEdicao, visivel]);
 
@@ -59,12 +61,13 @@ export default function ModalCompras({
     setNome("");
     setMarca("");
     setQuantidade(1);
+    setNomeErro("");
     aoFechar();
   };
 
   const lidarComGuardar = () => {
     if (nome.trim() === "") {
-      setAlertaVisivel(true);
+      setNomeErro("Por favor, insira o nome do produto!");
       return;
     }
     aoGuardar(nome, marca, quantidade, produtoEdicao?.id);
@@ -107,11 +110,27 @@ export default function ModalCompras({
 
                 <Text style={styles.label}>Nome do Produto *</Text>
                 <TextInput
-                  style={styles.input}
+                  style={[
+                    styles.input,
+                    { borderWidth: 1, borderColor: "transparent" },
+                    nomeErro
+                      ? { borderColor: "#d32f2f", backgroundColor: "#fff5f5" }
+                      : null,
+                  ]}
                   placeholder="Ex: Leite"
                   value={nome}
-                  onChangeText={setNome}
+                  onChangeText={(texto) => {
+                    setNome(texto);
+                    setNomeErro("");
+                  }}
                 />
+                {nomeErro ? (
+                  <Text
+                    style={{ color: "#d32f2f", fontSize: 13, marginTop: 2 }}
+                  >
+                    {nomeErro}
+                  </Text>
+                ) : null}
 
                 <Text style={styles.label}>Marca do Produto (Opcional)</Text>
                 <TextInput
@@ -165,12 +184,6 @@ export default function ModalCompras({
             </TouchableWithoutFeedback>
           </View>
         </TouchableWithoutFeedback>
-
-        <AlertaPersonalizado
-          visivel={alertaVisivel}
-          mensagem="Por favor, insira o nome do produto!"
-          aoFechar={() => setAlertaVisivel(false)}
-        />
       </KeyboardAvoidingView>
     </Modal>
   );

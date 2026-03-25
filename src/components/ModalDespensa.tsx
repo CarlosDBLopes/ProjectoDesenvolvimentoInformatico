@@ -15,7 +15,6 @@ import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 
 import { styles } from "../styles/ModalDespensaStyles";
-import AlertaPersonalizado from "./AlertaPersonalizado";
 import AlertaConfirmacao from "./AlertaConfirmacao";
 import AlertaPermissoes from "./AlertaPermissoes";
 import MenuImagem from "./MenuImagem";
@@ -55,7 +54,8 @@ export default function ModalDespensa({
   const [validade, setValidade] = useState("");
   const [imagem, setImagem] = useState<string | null>(null);
 
-  const [alertaVisivel, setAlertaVisivel] = useState(false);
+  const [nomeErro, setNomeErro] = useState("");
+
   const [confirmacaoVisivel, setConfirmacaoVisivel] = useState(false);
   const [alertaPermissaoVisivel, setAlertaPermissaoVisivel] = useState(false);
   const [mensagemPermissao, setMensagemPermissao] = useState("");
@@ -68,12 +68,14 @@ export default function ModalDespensa({
       setQuantidade(produtoEdicao.quantidade);
       setValidade(produtoEdicao.validade || "");
       setImagem(produtoEdicao.imagem || null);
+      setNomeErro("");
     } else {
       setNome("");
       setMarca("");
       setQuantidade(1);
       setValidade("");
       setImagem(null);
+      setNomeErro("");
     }
   }, [produtoEdicao, visivel]);
 
@@ -101,12 +103,13 @@ export default function ModalDespensa({
     setQuantidade(1);
     setValidade("");
     setImagem(null);
+    setNomeErro("");
     aoFechar();
   };
 
   const lidarComGuardar = () => {
     if (nome.trim() === "") {
-      setAlertaVisivel(true);
+      setNomeErro("Por favor, insira o nome do produto!");
       return;
     }
     aoGuardar(nome, marca, quantidade, validade, imagem, produtoEdicao?.id);
@@ -219,11 +222,38 @@ export default function ModalDespensa({
 
                 <Text style={styles.label}>Nome do Produto *</Text>
                 <TextInput
-                  style={styles.input}
+                  style={[
+                    styles.input,
+                    {
+                      borderWidth: 1,
+                      borderColor: "transparent",
+                      marginBottom: 0,
+                    },
+                    nomeErro
+                      ? { borderColor: "#d32f2f", backgroundColor: "#fff5f5" }
+                      : null,
+                  ]}
                   placeholder="Ex: Arroz Agulha"
                   value={nome}
-                  onChangeText={setNome}
+                  onChangeText={(texto) => {
+                    setNome(texto);
+                    setNomeErro("");
+                  }}
                 />
+                {nomeErro ? (
+                  <Text
+                    style={{
+                      color: "#d32f2f",
+                      fontSize: 13,
+                      marginTop: 4,
+                      marginBottom: 5,
+                    }}
+                  >
+                    {nomeErro}
+                  </Text>
+                ) : (
+                  <View style={{ height: 5 }} />
+                )}
 
                 <Text style={styles.label}>Marca do Produto (Opcional)</Text>
                 <TextInput
@@ -332,12 +362,6 @@ export default function ModalDespensa({
             </TouchableWithoutFeedback>
           </View>
         </TouchableWithoutFeedback>
-
-        <AlertaPersonalizado
-          visivel={alertaVisivel}
-          mensagem="Por favor, insira o nome do produto!"
-          aoFechar={() => setAlertaVisivel(false)}
-        />
 
         <AlertaConfirmacao
           visivel={confirmacaoVisivel}

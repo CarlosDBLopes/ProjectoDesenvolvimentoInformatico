@@ -29,26 +29,43 @@ const calcularStatusValidade = (validade: string) => {
 };
 
 export default function Dashboard() {
-  const nomeUtilizador = "Tiago";
+  const [nomeUtilizador, setNomeUtilizador] = useState("a carregar...");
 
   const [produtos, setProdutos] = useState<any[]>([]);
   const [carregando, setCarregando] = useState(true);
 
   useFocusEffect(
     useCallback(() => {
-      const buscarProdutosDaDespensa = async () => {
+      const importarProdutosDaDespensa = async () => {
         setCarregando(true);
-        const { data, error } = await supabase.from("despensa").select("*");
+        const { data: authData } = await supabase.auth.getUser();
 
-        if (error) {
-          console.error("Erro ao importar produtos:", error.message);
-        } else if (data) {
-          setProdutos(data);
+        if (authData?.user) {
+          const { data: perfilData } = await supabase
+            .from("perfis")
+            .select("nome")
+            .eq("id", authData.user.id)
+            .single();
+
+          if (perfilData && perfilData.nome) {
+            setNomeUtilizador(perfilData.nome);
+          } else {
+            setNomeUtilizador("Utilizador");
+          }
         }
+
+        const { data: produtosData } = await supabase
+          .from("despensa")
+          .select("*");
+
+        if (produtosData) {
+          setProdutos(produtosData);
+        }
+
         setCarregando(false);
       };
 
-      buscarProdutosDaDespensa();
+      importarProdutosDaDespensa();
     }, []),
   );
 
