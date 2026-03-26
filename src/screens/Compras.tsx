@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useFocusEffect } from "@react-navigation/native";
 import Toast from "react-native-toast-message";
 
@@ -61,6 +62,14 @@ export default function Compras() {
     quantidade: number,
     id?: string,
   ) => {
+    const { data: authData } = await supabase.auth.getUser();
+    const userId = authData.user?.id;
+
+    if (!userId) {
+      Toast.show({ type: "error", text1: "Erro", text2: "Sessão inválida!" });
+      return;
+    }
+
     if (id) {
       const { error } = await supabase
         .from("compras")
@@ -84,13 +93,15 @@ export default function Compras() {
     } else {
       const { error } = await supabase
         .from("compras")
-        .insert([{ nome, marca, quantidade, comprado: false }]);
+        .insert([
+          { nome, marca, quantidade, comprado: false, user_id: userId },
+        ]);
 
       if (error) {
         Toast.show({
           type: "error",
           text1: "Erro",
-          text2: "Não foi possível adicionar à lista.",
+          text2: "Não foi possível adicionar à lista!",
         });
       } else {
         Toast.show({
@@ -299,6 +310,16 @@ export default function Compras() {
           renderItem={desenharItem}
           contentContainerStyle={styles.lista}
           ListFooterComponent={<View style={{ height: 110 }} />}
+          ListEmptyComponent={
+            <View style={{ alignItems: "center", marginTop: 60 }}>
+              <MaterialIcons name="shopping-cart" size={60} color="#ccc" />
+              <Text style={{ color: "#888", fontSize: 16, marginTop: 10 }}>
+                {pesquisa
+                  ? "Nenhum produto encontrado!"
+                  : "A sua lista de compras está vazia!"}
+              </Text>
+            </View>
+          }
         />
       )}
 

@@ -83,7 +83,16 @@ export default function Registo({ navigation }: any) {
     });
 
     if (signUpError) {
-      setErroGeral(signUpError.message);
+      let mensagemErro = signUpError.message;
+
+      if (
+        mensagemErro.includes("User already registered") ||
+        mensagemErro.includes("already exists")
+      ) {
+        mensagemErro = "Este email já está registado. Por favor, faça login!";
+      }
+
+      setErroGeral(mensagemErro);
       setCarregando(false);
       return;
     }

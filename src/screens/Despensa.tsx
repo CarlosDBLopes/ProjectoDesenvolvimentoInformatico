@@ -11,6 +11,7 @@ import {
 import * as FileSystem from "expo-file-system/legacy";
 import { decode } from "base64-arraybuffer";
 import { Ionicons } from "@expo/vector-icons";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useFocusEffect } from "@react-navigation/native";
 import Toast from "react-native-toast-message";
 
@@ -93,6 +94,16 @@ export default function Despensa() {
     id?: string,
   ) => {
     setCarregando(true);
+
+    const { data: authData } = await supabase.auth.getUser();
+    const userId = authData.user?.id;
+
+    if (!userId) {
+      Toast.show({ type: "error", text1: "Erro", text2: "Sessão inválida!" });
+      setCarregando(false);
+      return;
+    }
+
     let imagemFinal = imagem;
 
     if (imagem && imagem.startsWith("file://")) {
@@ -160,15 +171,22 @@ export default function Despensa() {
         importarProdutos();
       }
     } else {
-      const { error } = await supabase
-        .from("despensa")
-        .insert([{ nome, marca, quantidade, validade, imagem: imagemFinal }]);
+      const { error } = await supabase.from("despensa").insert([
+        {
+          nome,
+          marca,
+          quantidade,
+          validade,
+          imagem: imagemFinal,
+          user_id: userId,
+        },
+      ]);
 
       if (error) {
         Toast.show({
           type: "error",
           text1: "Erro",
-          text2: "Não foi possível guardar o produto.",
+          text2: "Não foi possível guardar o produto!",
         });
         setCarregando(false);
       } else {
@@ -341,6 +359,16 @@ export default function Despensa() {
           renderItem={desenharCartao}
           contentContainerStyle={styles.lista}
           ListFooterComponent={<View style={{ height: 110 }} />}
+          ListEmptyComponent={
+            <View style={{ alignItems: "center", marginTop: 60 }}>
+              <MaterialIcons name="food-bank" size={60} color="#ccc" />
+              <Text style={{ color: "#888", fontSize: 16, marginTop: 10 }}>
+                {pesquisa
+                  ? "Nenhum produto encontrado!"
+                  : "A sua despensa está vazia!"}
+              </Text>
+            </View>
+          }
         />
       )}
 

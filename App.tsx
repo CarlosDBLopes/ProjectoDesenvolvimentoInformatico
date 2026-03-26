@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Platform, Alert, Pressable } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
+import { View, Text, StyleSheet, Platform, Pressable } from "react-native";
+import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Ionicons } from "@expo/vector-icons";
@@ -19,6 +19,7 @@ import Compras from "./src/screens/Compras";
 import Login from "./src/screens/Login";
 import Registo from "./src/screens/Registo";
 import RecuperarPassword from "./src/screens/RecuperarPassword";
+import Perfil from "./src/screens/Perfil";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -78,6 +79,55 @@ const toastConfig = {
   ),
 };
 
+function BotaoPerfil() {
+  const navigation = useNavigation<any>();
+  const [letra, setLetra] = useState("?");
+
+  useEffect(() => {
+    const fetchNome = async () => {
+      const { data: authData } = await supabase.auth.getUser();
+      if (authData?.user) {
+        const { data } = await supabase
+          .from("perfis")
+          .select("nome")
+          .eq("id", authData.user.id)
+          .single();
+
+        if (data && data.nome) {
+          setLetra(data.nome.charAt(0).toUpperCase());
+        }
+      }
+    };
+    fetchNome();
+  }, []);
+
+  return (
+    <Pressable
+      onPress={() => navigation.navigate("Perfil")}
+      style={({ pressed }) => [
+        {
+          marginLeft: 15,
+          width: 36,
+          height: 36,
+          borderRadius: 18,
+          backgroundColor: "#ffffff",
+          justifyContent: "center",
+          alignItems: "center",
+          elevation: 2,
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 1 },
+          shadowOpacity: 0.2,
+        },
+        pressed && { transform: [{ scale: 0.9 }], opacity: 0.8 },
+      ]}
+    >
+      <Text style={{ color: "#2e7d32", fontSize: 18, fontWeight: "bold" }}>
+        {letra}
+      </Text>
+    </Pressable>
+  );
+}
+
 function MainTabs() {
   return (
     <Tab.Navigator
@@ -93,29 +143,7 @@ function MainTabs() {
         headerTintColor: "#ffffff",
         headerTitleAlign: "center",
 
-        headerLeft: () => (
-          <Pressable
-            onPress={() => {
-              Alert.alert("A Minha Conta", "O que pretendes fazer?", [
-                { text: "Cancelar", style: "cancel" },
-                {
-                  text: "Terminar Sessão",
-                  style: "destructive",
-                  onPress: async () => {
-                    const { error } = await supabase.auth.signOut();
-                    if (error) console.error("Erro ao sair:", error);
-                  },
-                },
-              ]);
-            }}
-            style={({ pressed }) => [
-              { marginLeft: 15 },
-              pressed && { opacity: 0.7 },
-            ]}
-          >
-            <Ionicons name="person-circle" size={32} color="#ffffff" />
-          </Pressable>
-        ),
+        headerLeft: () => <BotaoPerfil />,
 
         tabBarStyle: {
           backgroundColor: "#ffffff",
@@ -194,7 +222,10 @@ export default function App() {
     <>
       <NavigationContainer>
         {sessao && sessao.user ? (
-          <MainTabs />
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="MainTabs" component={MainTabs} />
+            <Stack.Screen name="Perfil" component={Perfil} />
+          </Stack.Navigator>
         ) : (
           <Stack.Navigator screenOptions={{ headerShown: false }}>
             <Stack.Screen name="Login" component={Login} />
