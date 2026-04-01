@@ -14,11 +14,15 @@ import {
 } from "react-native";
 import Toast from "react-native-toast-message";
 import { Ionicons } from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
 
 import { styles } from "../styles/PerfilStyles";
+import BotaoIdiomaFlutuante from "../components/BotaoIdiomaFlutuante";
 import { supabase } from "../services/supabase";
 
 export default function Perfil({ navigation }: any) {
+  const { t } = useTranslation();
+
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [carregandoDados, setCarregandoDados] = useState(true);
@@ -74,18 +78,18 @@ export default function Perfil({ navigation }: any) {
     setConfirmarPasswordErro("");
 
     if (!novaPassword) {
-      setNovaPasswordErro("Por favor, insira a nova password!");
+      setNovaPasswordErro(t("perf_erro_nova_vazia"));
       valido = false;
     } else if (novaPassword.length < 6) {
-      setNovaPasswordErro("A password deve ter pelo menos 6 caracteres!");
+      setNovaPasswordErro(t("perf_erro_nova_curta"));
       valido = false;
     }
 
     if (!confirmarPassword) {
-      setConfirmarPasswordErro("Por favor, confirme a nova password!");
+      setConfirmarPasswordErro(t("perf_erro_conf_vazia"));
       valido = false;
     } else if (novaPassword !== confirmarPassword) {
-      setConfirmarPasswordErro("As passwords não coincidem!");
+      setConfirmarPasswordErro(t("perf_erro_conf_diferente"));
       valido = false;
     }
 
@@ -104,15 +108,15 @@ export default function Perfil({ navigation }: any) {
         mensagemErro.includes("different from the old password") ||
         mensagemErro.includes("same password")
       ) {
-        setNovaPasswordErro("A nova password não pode ser igual à atual!");
+        setNovaPasswordErro(t("perf_erro_pass_igual"));
       } else {
-        setNovaPasswordErro("Erro: " + mensagemErro);
+        setNovaPasswordErro(t("toast_erro") + mensagemErro);
       }
     } else {
       Toast.show({
         type: "success",
-        text1: "Sucesso!",
-        text2: "A sua password foi alterada!",
+        text1: t("toast_sucesso"),
+        text2: t("perf_sucesso_alterada"),
       });
       limparEFecharModal();
     }
@@ -125,7 +129,7 @@ export default function Perfil({ navigation }: any) {
     if (error) {
       Toast.show({
         type: "error",
-        text1: "Erro ao sair",
+        text1: t("perf_erro_sair"),
         text2: error.message,
       });
     }
@@ -152,6 +156,8 @@ export default function Perfil({ navigation }: any) {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scroll}
       >
+        <BotaoIdiomaFlutuante />
+
         <Pressable
           onPress={() => navigation.goBack()}
           style={({ pressed }) => [
@@ -160,18 +166,20 @@ export default function Perfil({ navigation }: any) {
           ]}
         >
           <Ionicons name="arrow-back" size={28} color="#2e7d32" />
-          <Text style={styles.textoBotaoVoltar}>Voltar à Despensa</Text>
+          <Text style={styles.textoBotaoVoltar}>{t("perf_voltar")}</Text>
         </Pressable>
 
         <View style={styles.zonaTexto}>
-          <Text style={styles.titulo}>O Meu Perfil</Text>
+          <Text style={styles.titulo}>{t("perf_titulo")}</Text>
         </View>
 
         <View style={styles.cartaoDados}>
-          <Text style={styles.labelDados}>Nome</Text>
+          <Text style={styles.labelDados}>{t("perf_nome")}</Text>
           <Text style={styles.textoDados}>{nome}</Text>
 
-          <Text style={[styles.labelDados, { marginTop: 15 }]}>Email</Text>
+          <Text style={[styles.labelDados, { marginTop: 15 }]}>
+            {t("perf_email")}
+          </Text>
           <Text style={styles.textoDados}>{email}</Text>
         </View>
 
@@ -188,7 +196,9 @@ export default function Perfil({ navigation }: any) {
             color="#fff"
             style={{ marginRight: 10 }}
           />
-          <Text style={styles.textoBotaoAbrirModal}>Alterar Password</Text>
+          <Text style={styles.textoBotaoAbrirModal}>
+            {t("perf_btn_alterar_pass")}
+          </Text>
         </Pressable>
 
         <Pressable
@@ -204,7 +214,7 @@ export default function Perfil({ navigation }: any) {
             color="#fff"
             style={{ marginRight: 8 }}
           />
-          <Text style={styles.textoBotaoLogout}>Terminar Sessão</Text>
+          <Text style={styles.textoBotaoLogout}>{t("perf_btn_logout")}</Text>
         </Pressable>
       </ScrollView>
 
@@ -226,7 +236,9 @@ export default function Perfil({ navigation }: any) {
               <TouchableWithoutFeedback>
                 <View style={styles.cartaoModal}>
                   <View style={styles.cabecalhoModal}>
-                    <Text style={styles.tituloModal}>Alterar Password</Text>
+                    <Text style={styles.tituloModal}>
+                      {t("perf_btn_alterar_pass")}
+                    </Text>
                     <Pressable
                       onPress={limparEFecharModal}
                       style={({ pressed }) => [
@@ -240,7 +252,7 @@ export default function Perfil({ navigation }: any) {
                     </Pressable>
                   </View>
 
-                  <Text style={styles.labelModal}>Nova Password</Text>
+                  <Text style={styles.labelModal}>{t("perf_nova_pass")}</Text>
                   <View
                     style={[
                       styles.inputContainer,
@@ -255,7 +267,7 @@ export default function Perfil({ navigation }: any) {
                     />
                     <TextInput
                       style={styles.inputModal}
-                      placeholder="Mínimo 6 caracteres"
+                      placeholder={t("perf_nova_pass_ph")}
                       secureTextEntry={!mostrarNovaPassword}
                       autoCapitalize="none"
                       value={novaPassword}
@@ -288,7 +300,7 @@ export default function Perfil({ navigation }: any) {
                     <Text style={styles.textoErro}>{novaPasswordErro}</Text>
                   ) : null}
 
-                  <Text style={styles.labelModal}>Confirmar Nova Password</Text>
+                  <Text style={styles.labelModal}>{t("perf_conf_pass")}</Text>
                   <View
                     style={[
                       styles.inputContainer,
@@ -303,7 +315,7 @@ export default function Perfil({ navigation }: any) {
                     />
                     <TextInput
                       style={styles.inputModal}
-                      placeholder="Repita a nova password"
+                      placeholder={t("perf_conf_pass_ph")}
                       secureTextEntry={!mostrarConfirmarPassword}
                       autoCapitalize="none"
                       value={confirmarPassword}
@@ -353,7 +365,7 @@ export default function Perfil({ navigation }: any) {
                       <ActivityIndicator color="#fff" />
                     ) : (
                       <Text style={styles.textoBotaoGuardar}>
-                        Atualizar Password
+                        {t("perf_btn_atualizar")}
                       </Text>
                     )}
                   </Pressable>

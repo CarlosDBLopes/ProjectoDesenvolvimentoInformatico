@@ -11,11 +11,15 @@ import {
 } from "react-native";
 import Toast from "react-native-toast-message";
 import { Ionicons } from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
 
 import { styles } from "../styles/RegistoStyles";
+import BotaoIdiomaFlutuante from "../components/BotaoIdiomaFlutuante";
 import { supabase } from "../services/supabase";
 
 export default function Registo({ navigation }: any) {
+  const { t } = useTranslation();
+
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -41,31 +45,31 @@ export default function Registo({ navigation }: any) {
     setErroGeral("");
 
     if (!nome.trim()) {
-      setNomeErro("Por favor, insira o seu nome!");
+      setNomeErro(t("auth_erro_nome_vazio"));
       valido = false;
     }
 
     if (!email.trim()) {
-      setEmailErro("Por favor, insira o seu email!");
+      setEmailErro(t("auth_erro_email_vazio"));
       valido = false;
     } else if (!/\S+@\S+\.\S+/.test(email)) {
-      setEmailErro("O formato do email é inválido!");
+      setEmailErro(t("auth_erro_email_invalido"));
       valido = false;
     }
 
     if (!password) {
-      setPasswordErro("Por favor, crie uma password!");
+      setPasswordErro(t("auth_erro_pass_cria"));
       valido = false;
     } else if (password.length < 6) {
-      setPasswordErro("A password deve ter pelo menos 6 caracteres!");
+      setPasswordErro(t("auth_erro_pass_curta"));
       valido = false;
     }
 
     if (!confirmarPassword) {
-      setConfirmarPasswordErro("Por favor, confirme a sua password!");
+      setConfirmarPasswordErro(t("auth_erro_conf_pass_vazia"));
       valido = false;
     } else if (password !== confirmarPassword) {
-      setConfirmarPasswordErro("As passwords não coincidem!");
+      setConfirmarPasswordErro(t("auth_erro_pass_nao_coincidem"));
       valido = false;
     }
 
@@ -89,7 +93,7 @@ export default function Registo({ navigation }: any) {
         mensagemErro.includes("User already registered") ||
         mensagemErro.includes("already exists")
       ) {
-        mensagemErro = "Este email já está registado. Por favor, faça login!";
+        mensagemErro = t("auth_erro_email_registo");
       }
 
       setErroGeral(mensagemErro);
@@ -104,12 +108,12 @@ export default function Registo({ navigation }: any) {
 
       if (perfilError) {
         console.error("Erro ao criar perfil:", perfilError);
-        setErroGeral("A conta foi criada, mas falhou ao guardar o seu nome!");
+        setErroGeral(t("auth_erro_criar_perfil"));
       } else {
         Toast.show({
           type: "success",
-          text1: "Conta Criada!",
-          text2: "Bem-vindo à DespensaSmart.",
+          text1: t("auth_sucesso_conta_criada"),
+          text2: t("auth_sucesso_bem_vindo"),
         });
       }
     }
@@ -122,6 +126,8 @@ export default function Registo({ navigation }: any) {
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
+      <BotaoIdiomaFlutuante />
+
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scroll}
@@ -134,14 +140,12 @@ export default function Registo({ navigation }: any) {
           ]}
         >
           <Ionicons name="arrow-back" size={28} color="#2e7d32" />
-          <Text style={styles.textoVoltar}>Voltar para Login</Text>
+          <Text style={styles.textoVoltar}>{t("auth_voltar_login")}</Text>
         </Pressable>
 
         <View style={styles.zonaTexto}>
-          <Text style={styles.titulo}>Criar Conta</Text>
-          <Text style={styles.subtitulo}>
-            Junte-se a nós e organize a sua despensa.
-          </Text>
+          <Text style={styles.titulo}>{t("auth_reg_titulo")}</Text>
+          <Text style={styles.subtitulo}>{t("auth_reg_subtitulo")}</Text>
         </View>
 
         <View style={styles.formulario}>
@@ -163,7 +167,7 @@ export default function Registo({ navigation }: any) {
             />
             <TextInput
               style={styles.input}
-              placeholder="Nome (ex: Tiago)"
+              placeholder={t("auth_reg_nome_ph")}
               value={nome}
               onChangeText={(texto) => {
                 setNome(texto);
@@ -187,7 +191,7 @@ export default function Registo({ navigation }: any) {
             />
             <TextInput
               style={styles.input}
-              placeholder="Email"
+              placeholder={t("auth_email")}
               keyboardType="email-address"
               autoCapitalize="none"
               value={email}
@@ -213,7 +217,7 @@ export default function Registo({ navigation }: any) {
             />
             <TextInput
               style={styles.input}
-              placeholder="Password"
+              placeholder={t("auth_pass")}
               secureTextEntry={!mostrarPassword}
               autoCapitalize="none"
               value={password}
@@ -254,7 +258,7 @@ export default function Registo({ navigation }: any) {
             />
             <TextInput
               style={styles.input}
-              placeholder="Confirmar Password"
+              placeholder={t("auth_reg_pass_conf_ph")}
               secureTextEntry={!mostrarConfirmarPassword}
               autoCapitalize="none"
               value={confirmarPassword}
@@ -296,7 +300,7 @@ export default function Registo({ navigation }: any) {
             {carregando ? (
               <ActivityIndicator color="#fff" />
             ) : (
-              <Text style={styles.textoBotaoRegisto}>Registar</Text>
+              <Text style={styles.textoBotaoRegisto}>{t("auth_reg_btn")}</Text>
             )}
           </Pressable>
         </View>

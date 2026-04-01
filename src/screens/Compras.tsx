@@ -11,6 +11,7 @@ import { Ionicons } from "@expo/vector-icons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useFocusEffect } from "@react-navigation/native";
 import Toast from "react-native-toast-message";
+import { useTranslation } from "react-i18next";
 
 import { styles } from "../styles/ComprasStyles";
 import ModalCompras from "../components/ModalCompras";
@@ -18,6 +19,8 @@ import AlertaConfirmacao from "../components/AlertaConfirmacao";
 import { supabase } from "../services/supabase";
 
 export default function Compras() {
+  const { t } = useTranslation();
+
   const [pesquisa, setPesquisa] = useState("");
   const [modalVisivel, setModalVisivel] = useState(false);
   const [produtoEditando, setProdutoEditando] = useState<any>(null);
@@ -41,8 +44,8 @@ export default function Compras() {
       console.error("Erro ao importar lista de compras:", error.message);
       Toast.show({
         type: "error",
-        text1: "Erro",
-        text2: "Não foi possível carregar a lista de compras.",
+        text1: t("toast_erro"),
+        text2: t("toast_erro_carregar_compras"),
       });
     } else if (data) {
       setListaCompras(data);
@@ -66,7 +69,11 @@ export default function Compras() {
     const userId = authData.user?.id;
 
     if (!userId) {
-      Toast.show({ type: "error", text1: "Erro", text2: "Sessão inválida!" });
+      Toast.show({
+        type: "error",
+        text1: t("toast_erro"),
+        text2: t("toast_sessao_invalida"),
+      });
       return;
     }
 
@@ -79,14 +86,14 @@ export default function Compras() {
       if (error)
         Toast.show({
           type: "error",
-          text1: "Erro",
-          text2: "Não foi possível atualizar o produto.",
+          text1: t("toast_erro"),
+          text2: t("toast_erro_atualizar_produto"),
         });
       else {
         Toast.show({
           type: "success",
-          text1: "Sucesso!",
-          text2: "Produto atualizado.",
+          text1: t("toast_sucesso"),
+          text2: t("toast_sucesso_atualizar_compras"),
         });
         importarCompras();
       }
@@ -100,14 +107,14 @@ export default function Compras() {
       if (error) {
         Toast.show({
           type: "error",
-          text1: "Erro",
-          text2: "Não foi possível adicionar à lista!",
+          text1: t("toast_erro"),
+          text2: t("toast_erro_add_lista"),
         });
       } else {
         Toast.show({
           type: "success",
-          text1: "Sucesso!",
-          text2: "Adicionado à lista de compras.",
+          text1: t("toast_sucesso"),
+          text2: t("toast_sucesso_add_lista"),
         });
         importarCompras();
       }
@@ -131,8 +138,8 @@ export default function Compras() {
     if (error) {
       Toast.show({
         type: "error",
-        text1: "Erro",
-        text2: "Não foi possível alterar o estado.",
+        text1: t("toast_erro"),
+        text2: t("toast_erro_alterar_estado"),
       });
       importarCompras(false);
     }
@@ -144,14 +151,14 @@ export default function Compras() {
     if (error) {
       Toast.show({
         type: "error",
-        text1: "Erro",
-        text2: "Não foi possível eliminar da lista.",
+        text1: t("toast_erro"),
+        text2: t("toast_erro_eliminar_lista"),
       });
     } else {
       Toast.show({
         type: "success",
-        text1: "Eliminado",
-        text2: "O item foi removido da lista.",
+        text1: t("toast_eliminado"),
+        text2: t("toast_sucesso_eliminar_lista"),
       });
       importarCompras();
     }
@@ -264,7 +271,7 @@ export default function Compras() {
           />
           <TextInput
             style={styles.inputPesquisa}
-            placeholder="Procurar na lista..."
+            placeholder={t("comp_pesquisar")}
             value={pesquisa}
             onChangeText={(texto) => setPesquisa(texto)}
           />
@@ -286,8 +293,12 @@ export default function Compras() {
 
       <View style={styles.cabecalhoTabela}>
         <View style={styles.colCheckbox} />
-        <Text style={[styles.textoCabecalho, styles.colNome]}>Produto</Text>
-        <Text style={[styles.textoCabecalho, styles.colQtd]}>Qtd.</Text>
+        <Text style={[styles.textoCabecalho, styles.colNome]}>
+          {t("comp_col_produto")}
+        </Text>
+        <Text style={[styles.textoCabecalho, styles.colQtd]}>
+          {t("comp_col_qtd")}
+        </Text>
         <View style={styles.colEdit} />
         <View style={styles.colDelete} />
       </View>
@@ -314,9 +325,7 @@ export default function Compras() {
             <View style={{ alignItems: "center", marginTop: 60 }}>
               <MaterialIcons name="shopping-cart" size={60} color="#ccc" />
               <Text style={{ color: "#888", fontSize: 16, marginTop: 10 }}>
-                {pesquisa
-                  ? "Nenhum produto encontrado!"
-                  : "A sua lista de compras está vazia!"}
+                {pesquisa ? t("comp_nada_encontrado") : t("comp_vazia")}
               </Text>
             </View>
           }
@@ -332,11 +341,11 @@ export default function Compras() {
 
       <AlertaConfirmacao
         visivel={confirmacaoVisivel}
-        titulo="Remover da Lista"
+        titulo={t("msg_titulo_remover_lista")}
         mensagem={
           produtoParaRemover
-            ? `Tem a certeza que pretende remover "${produtoParaRemover?.nome}" da lista de compras?`
-            : "A carregar..."
+            ? t("msg_remover_compras", { nome: produtoParaRemover?.nome })
+            : "..."
         }
         aoCancelar={() => setConfirmacaoVisivel(false)}
         aoConfirmar={confirmarRemocao}

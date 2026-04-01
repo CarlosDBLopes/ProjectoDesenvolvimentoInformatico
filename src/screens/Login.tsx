@@ -11,11 +11,15 @@ import {
 } from "react-native";
 import Toast from "react-native-toast-message";
 import { Ionicons } from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
 
 import { styles } from "../styles/LoginStyles";
+import BotaoIdiomaFlutuante from "../components/BotaoIdiomaFlutuante";
 import { supabase } from "../services/supabase";
 
 export default function Login({ navigation }: any) {
+  const { t } = useTranslation();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [carregando, setCarregando] = useState(false);
@@ -32,15 +36,15 @@ export default function Login({ navigation }: any) {
     setErroGeral("");
 
     if (!email.trim()) {
-      setEmailErro("Por favor, insira o seu email!");
+      setEmailErro(t("auth_erro_email_vazio"));
       valido = false;
     } else if (!/\S+@\S+\.\S+/.test(email)) {
-      setEmailErro("O formato do email é inválido!");
+      setEmailErro(t("auth_erro_email_invalido"));
       valido = false;
     }
 
     if (!password) {
-      setPasswordErro("Por favor, insira a sua password!");
+      setPasswordErro(t("auth_erro_pass_vazia"));
       valido = false;
     }
 
@@ -58,13 +62,13 @@ export default function Login({ navigation }: any) {
     });
 
     if (error) {
-      setErroGeral("Credenciais inválidas! Verifique o seu email e password.");
+      setErroGeral(t("auth_erro_credenciais"));
       setCarregando(false);
     } else {
       Toast.show({
         type: "success",
-        text1: "Bem-vindo!",
-        text2: "Sessão iniciada com sucesso.",
+        text1: t("auth_bem_vindo"),
+        text2: t("auth_sucesso_login"),
       });
     }
   };
@@ -74,13 +78,15 @@ export default function Login({ navigation }: any) {
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
+      <BotaoIdiomaFlutuante />
+
       <View style={styles.zonaLogo}>
         <Image
           source={require("../../assets/adaptive-icon.png")}
           style={styles.logo}
         />
         <Text style={styles.titulo}>DespensaSmart</Text>
-        <Text style={styles.subtitulo}>A sua despensa na palma da mão.</Text>
+        <Text style={styles.subtitulo}>{t("auth_login_subtitulo")}</Text>
       </View>
 
       <View style={styles.formulario}>
@@ -102,7 +108,7 @@ export default function Login({ navigation }: any) {
           />
           <TextInput
             style={styles.input}
-            placeholder="Email"
+            placeholder={t("auth_email")}
             keyboardType="email-address"
             autoCapitalize="none"
             value={email}
@@ -128,7 +134,7 @@ export default function Login({ navigation }: any) {
           />
           <TextInput
             style={styles.input}
-            placeholder="Password"
+            placeholder={t("auth_pass")}
             secureTextEntry={!mostrarPassword}
             autoCapitalize="none"
             value={password}
@@ -162,7 +168,7 @@ export default function Login({ navigation }: any) {
             pressed && { opacity: 0.6 },
           ]}
         >
-          <Text style={styles.textoEsqueceu}>Esqueceu-se da password?</Text>
+          <Text style={styles.textoEsqueceu}>{t("auth_esqueceu")}</Text>
         </Pressable>
 
         <Pressable
@@ -176,18 +182,18 @@ export default function Login({ navigation }: any) {
           {carregando ? (
             <ActivityIndicator color="#fff" />
           ) : (
-            <Text style={styles.textoBotaoLogin}>Entrar</Text>
+            <Text style={styles.textoBotaoLogin}>{t("auth_entrar")}</Text>
           )}
         </Pressable>
       </View>
 
       <View style={styles.rodape}>
-        <Text style={styles.textoRodape}>Ainda não tem conta? </Text>
+        <Text style={styles.textoRodape}>{t("auth_sem_conta")} </Text>
         <Pressable
           onPress={() => navigation.navigate("Registo")}
           style={({ pressed }) => [pressed && { opacity: 0.6 }]}
         >
-          <Text style={styles.textoRegisto}>Registe-se aqui</Text>
+          <Text style={styles.textoRegisto}>{t("auth_registe_se")}</Text>
         </Pressable>
       </View>
     </KeyboardAvoidingView>

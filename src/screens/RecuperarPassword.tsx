@@ -10,11 +10,15 @@ import {
 } from "react-native";
 import Toast from "react-native-toast-message";
 import { Ionicons } from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
 
 import { styles } from "../styles/RecuperarPasswordStyles";
+import BotaoIdiomaFlutuante from "../components/BotaoIdiomaFlutuante";
 import { supabase } from "../services/supabase";
 
 export default function RecuperarPassword({ navigation }: any) {
+  const { t } = useTranslation();
+
   const [email, setEmail] = useState("");
   const [carregando, setCarregando] = useState(false);
   const [emailErro, setEmailErro] = useState("");
@@ -23,7 +27,7 @@ export default function RecuperarPassword({ navigation }: any) {
     setEmailErro("");
 
     if (!email.trim() || !/\S+@\S+\.\S+/.test(email)) {
-      setEmailErro("Por favor, insira um email válido!");
+      setEmailErro(t("auth_erro_email_valido"));
       return;
     }
 
@@ -32,12 +36,16 @@ export default function RecuperarPassword({ navigation }: any) {
     const { error } = await supabase.auth.resetPasswordForEmail(email);
 
     if (error) {
-      Toast.show({ type: "error", text1: "Erro", text2: error.message });
+      Toast.show({
+        type: "error",
+        text1: t("toast_erro"),
+        text2: error.message,
+      });
     } else {
       Toast.show({
         type: "success",
-        text1: "Email Enviado!",
-        text2: "Verifique a sua caixa de entrada.",
+        text1: t("auth_sucesso_email_enviado"),
+        text2: t("auth_sucesso_verifique_caixa"),
       });
       navigation.goBack();
     }
@@ -50,6 +58,8 @@ export default function RecuperarPassword({ navigation }: any) {
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
+      <BotaoIdiomaFlutuante />
+
       <Pressable
         onPress={() => navigation.goBack()}
         style={({ pressed }) => [
@@ -58,15 +68,12 @@ export default function RecuperarPassword({ navigation }: any) {
         ]}
       >
         <Ionicons name="arrow-back" size={28} color="#2e7d32" />
-        <Text style={styles.textoBotaoVoltar}>Voltar para Login</Text>
+        <Text style={styles.textoBotaoVoltar}>{t("auth_voltar_login")}</Text>
       </Pressable>
 
       <View style={styles.zonaTexto}>
-        <Text style={styles.titulo}>Recuperar Password</Text>
-        <Text style={styles.subtitulo}>
-          Insira o seu email e será enviado um link para definir uma nova
-          password.
-        </Text>
+        <Text style={styles.titulo}>{t("auth_rec_titulo")}</Text>
+        <Text style={styles.subtitulo}>{t("auth_rec_subtitulo")}</Text>
       </View>
 
       <View style={styles.formulario}>
@@ -84,7 +91,7 @@ export default function RecuperarPassword({ navigation }: any) {
           />
           <TextInput
             style={styles.input}
-            placeholder="O seu Email"
+            placeholder={t("auth_rec_email_ph")}
             keyboardType="email-address"
             autoCapitalize="none"
             value={email}
@@ -107,9 +114,7 @@ export default function RecuperarPassword({ navigation }: any) {
           {carregando ? (
             <ActivityIndicator color="#fff" />
           ) : (
-            <Text style={styles.textoBotaoEnviar}>
-              Enviar Link de Recuperação
-            </Text>
+            <Text style={styles.textoBotaoEnviar}>{t("auth_rec_btn")}</Text>
           )}
         </Pressable>
       </View>

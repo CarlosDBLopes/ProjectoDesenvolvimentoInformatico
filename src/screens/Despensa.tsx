@@ -14,6 +14,7 @@ import { Ionicons } from "@expo/vector-icons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useFocusEffect } from "@react-navigation/native";
 import Toast from "react-native-toast-message";
+import { useTranslation } from "react-i18next";
 
 import { styles } from "../styles/DespensaStyles";
 import ModalDespensa from "../components/ModalDespensa";
@@ -26,6 +27,8 @@ const extrairNomeFicheiro = (url: string) => {
 };
 
 export default function Despensa() {
+  const { t } = useTranslation();
+
   const [pesquisa, setPesquisa] = useState("");
   const [produtos, setProdutos] = useState<any[]>([]);
 
@@ -44,8 +47,8 @@ export default function Despensa() {
     if (error) {
       Toast.show({
         type: "error",
-        text1: "Erro",
-        text2: "Não foi possível carregar a despensa.",
+        text1: t("toast_erro"),
+        text2: t("toast_erro_carregar_despensa"),
       });
     } else if (data) {
       setProdutos(data);
@@ -99,7 +102,11 @@ export default function Despensa() {
     const userId = authData.user?.id;
 
     if (!userId) {
-      Toast.show({ type: "error", text1: "Erro", text2: "Sessão inválida!" });
+      Toast.show({
+        type: "error",
+        text1: t("toast_erro"),
+        text2: t("toast_sessao_invalida"),
+      });
       setCarregando(false);
       return;
     }
@@ -119,8 +126,8 @@ export default function Despensa() {
       if (uploadError) {
         Toast.show({
           type: "error",
-          text1: "Aviso de Imagem",
-          text2: "A imagem não foi guardada, mas o produto será gravado.",
+          text1: t("toast_aviso_imagem"),
+          text2: t("toast_aviso_imagem_msg"),
         });
       } else {
         const { data: publicData } = supabase.storage
@@ -158,15 +165,15 @@ export default function Despensa() {
       if (error) {
         Toast.show({
           type: "error",
-          text1: "Erro",
-          text2: "Não foi possível atualizar o produto.",
+          text1: t("toast_erro"),
+          text2: t("toast_erro_atualizar_produto"),
         });
         setCarregando(false);
       } else {
         Toast.show({
           type: "success",
-          text1: "Sucesso!",
-          text2: "Produto atualizado na despensa.",
+          text1: t("toast_sucesso"),
+          text2: t("toast_sucesso_atualizar_despensa"),
         });
         importarProdutos();
       }
@@ -185,15 +192,15 @@ export default function Despensa() {
       if (error) {
         Toast.show({
           type: "error",
-          text1: "Erro",
-          text2: "Não foi possível guardar o produto!",
+          text1: t("toast_erro"),
+          text2: t("toast_erro_guardar_produto"),
         });
         setCarregando(false);
       } else {
         Toast.show({
           type: "success",
-          text1: "Sucesso!",
-          text2: "Adicionado à despensa.",
+          text1: t("toast_sucesso"),
+          text2: t("toast_sucesso_add_despensa"),
         });
         importarProdutos();
       }
@@ -209,8 +216,8 @@ export default function Despensa() {
     if (error) {
       Toast.show({
         type: "error",
-        text1: "Erro",
-        text2: "Não foi possível eliminar o produto.",
+        text1: t("toast_erro"),
+        text2: t("toast_erro_eliminar_produto"),
       });
       setCarregando(false);
     } else {
@@ -226,8 +233,8 @@ export default function Despensa() {
       }
       Toast.show({
         type: "success",
-        text1: "Eliminado",
-        text2: "O produto foi removido da despensa.",
+        text1: t("toast_eliminado"),
+        text2: t("toast_sucesso_eliminar_despensa"),
       });
       importarProdutos();
     }
@@ -314,7 +321,7 @@ export default function Despensa() {
           />
           <TextInput
             style={styles.inputPesquisa}
-            placeholder="Procurar na despensa..."
+            placeholder={t("desp_pesquisar")}
             value={pesquisa}
             onChangeText={(texto) => setPesquisa(texto)}
           />
@@ -335,10 +342,18 @@ export default function Despensa() {
       </View>
 
       <View style={styles.cabecalhoTabela}>
-        <Text style={[styles.textoCabecalho, styles.colImagem]}>Imagem</Text>
-        <Text style={[styles.textoCabecalho, styles.colNome]}>Produto</Text>
-        <Text style={[styles.textoCabecalho, styles.colQtd]}>Qtd.</Text>
-        <Text style={[styles.textoCabecalho, styles.colStatus]}>Estado</Text>
+        <Text style={[styles.textoCabecalho, styles.colImagem]}>
+          {t("desp_col_imagem")}
+        </Text>
+        <Text style={[styles.textoCabecalho, styles.colNome]}>
+          {t("desp_col_produto")}
+        </Text>
+        <Text style={[styles.textoCabecalho, styles.colQtd]}>
+          {t("desp_col_qtd")}
+        </Text>
+        <Text style={[styles.textoCabecalho, styles.colStatus]}>
+          {t("desp_col_estado")}
+        </Text>
       </View>
 
       {carregando ? (
@@ -363,9 +378,7 @@ export default function Despensa() {
             <View style={{ alignItems: "center", marginTop: 60 }}>
               <MaterialIcons name="food-bank" size={60} color="#ccc" />
               <Text style={{ color: "#888", fontSize: 16, marginTop: 10 }}>
-                {pesquisa
-                  ? "Nenhum produto encontrado!"
-                  : "A sua despensa está vazia!"}
+                {pesquisa ? t("desp_nada_encontrado") : t("desp_vazia")}
               </Text>
             </View>
           }

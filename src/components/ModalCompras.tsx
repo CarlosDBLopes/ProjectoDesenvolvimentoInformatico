@@ -11,6 +11,7 @@ import {
   Keyboard,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
 
 import { styles } from "../styles/ModalComprasStyles";
 
@@ -37,6 +38,8 @@ export default function ModalCompras({
   aoGuardar,
   produtoEdicao,
 }: ModalComprasProps) {
+  const { t } = useTranslation();
+
   const [nome, setNome] = useState("");
   const [marca, setMarca] = useState("");
   const [quantidade, setQuantidade] = useState(1);
@@ -67,7 +70,7 @@ export default function ModalCompras({
 
   const lidarComGuardar = () => {
     if (nome.trim() === "") {
-      setNomeErro("Por favor, insira o nome do produto!");
+      setNomeErro(t("mod_nome_erro"));
       return;
     }
     aoGuardar(nome, marca, quantidade, produtoEdicao?.id);
@@ -96,7 +99,7 @@ export default function ModalCompras({
               <View style={styles.cartaoModal}>
                 <View style={styles.cabecalho}>
                   <Text style={styles.titulo}>
-                    {modoEdicao ? "Editar Produto" : "Adicionar à Lista"}
+                    {modoEdicao ? t("mod_edit_produto") : t("mod_add_lista")}
                   </Text>
                   <Pressable
                     onPress={limparEFechar}
@@ -108,7 +111,7 @@ export default function ModalCompras({
                   </Pressable>
                 </View>
 
-                <Text style={styles.label}>Nome do Produto *</Text>
+                <Text style={styles.label}>{t("mod_nome")}</Text>
                 <TextInput
                   style={[
                     styles.input,
@@ -117,7 +120,7 @@ export default function ModalCompras({
                       ? { borderColor: "#d32f2f", backgroundColor: "#fff5f5" }
                       : null,
                   ]}
-                  placeholder="Ex: Leite"
+                  placeholder={t("mod_nome_ex")}
                   value={nome}
                   onChangeText={(texto) => {
                     setNome(texto);
@@ -132,15 +135,15 @@ export default function ModalCompras({
                   </Text>
                 ) : null}
 
-                <Text style={styles.label}>Marca do Produto (Opcional)</Text>
+                <Text style={styles.label}>{t("mod_marca")}</Text>
                 <TextInput
                   style={styles.input}
-                  placeholder="Ex: Mimosa"
+                  placeholder={t("mod_marca_ex")}
                   value={marca}
                   onChangeText={setMarca}
                 />
 
-                <Text style={styles.label}>Quantidade</Text>
+                <Text style={styles.label}>{t("mod_qtd")}</Text>
                 <View style={styles.zonaQuantidade}>
                   <Pressable
                     onPress={() => {
@@ -177,7 +180,7 @@ export default function ModalCompras({
                   ]}
                 >
                   <Text style={styles.textoBotaoGuardar}>
-                    {modoEdicao ? "Guardar Alterações" : "Adicionar à Lista"}
+                    {modoEdicao ? t("mod_btn_guardar") : t("mod_add_lista")}
                   </Text>
                 </Pressable>
               </View>

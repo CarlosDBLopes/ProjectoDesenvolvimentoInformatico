@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
+import { useTranslation } from "react-i18next";
 
 import { styles } from "../styles/ModalDespensaStyles";
 import AlertaConfirmacao from "./AlertaConfirmacao";
@@ -48,6 +49,8 @@ export default function ModalDespensa({
   aoEliminar,
   produtoEdicao,
 }: ModalDespensaProps) {
+  const { t } = useTranslation();
+
   const [nome, setNome] = useState("");
   const [marca, setMarca] = useState("");
   const [quantidade, setQuantidade] = useState(1);
@@ -109,7 +112,7 @@ export default function ModalDespensa({
 
   const lidarComGuardar = () => {
     if (nome.trim() === "") {
-      setNomeErro("Por favor, insira o nome do produto!");
+      setNomeErro(t("mod_nome_erro"));
       return;
     }
     aoGuardar(nome, marca, quantidade, validade, imagem, produtoEdicao?.id);
@@ -123,7 +126,7 @@ export default function ModalDespensa({
   const tirarFoto = async () => {
     const permissao = await ImagePicker.requestCameraPermissionsAsync();
     if (!permissao.granted) {
-      setMensagemPermissao("É necessária permissão para aceder à câmara!");
+      setMensagemPermissao(t("mod_tirar_foto_erro"));
       setAlertaPermissaoVisivel(true);
       return;
     }
@@ -140,7 +143,7 @@ export default function ModalDespensa({
   const escolherDaGaleria = async () => {
     const permissao = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!permissao.granted) {
-      setMensagemPermissao("É necessária permissão para aceder à galeria!");
+      setMensagemPermissao(t("mod_escolher_galeria_erro"));
       setAlertaPermissaoVisivel(true);
       return;
     }
@@ -189,7 +192,7 @@ export default function ModalDespensa({
               <View style={styles.cartaoModal}>
                 <View style={styles.cabecalho}>
                   <Text style={styles.titulo}>
-                    {modoEdicao ? "Editar Produto" : "Adicionar à Despensa"}
+                    {modoEdicao ? t("mod_edit_produto") : t("mod_add_despensa")}
                   </Text>
                   <Pressable
                     onPress={limparEFechar}
@@ -220,7 +223,7 @@ export default function ModalDespensa({
                   </Pressable>
                 </View>
 
-                <Text style={styles.label}>Nome do Produto *</Text>
+                <Text style={styles.label}>{t("mod_nome")}</Text>
                 <TextInput
                   style={[
                     styles.input,
@@ -233,7 +236,7 @@ export default function ModalDespensa({
                       ? { borderColor: "#d32f2f", backgroundColor: "#fff5f5" }
                       : null,
                   ]}
-                  placeholder="Ex: Arroz Agulha"
+                  placeholder={t("mod_nome_ex")}
                   value={nome}
                   onChangeText={(texto) => {
                     setNome(texto);
@@ -255,17 +258,17 @@ export default function ModalDespensa({
                   <View style={{ height: 5 }} />
                 )}
 
-                <Text style={styles.label}>Marca do Produto (Opcional)</Text>
+                <Text style={styles.label}>{t("mod_marca")}</Text>
                 <TextInput
                   style={styles.input}
-                  placeholder="Ex: Cigala"
+                  placeholder={t("mod_marca_ex")}
                   value={marca}
                   onChangeText={setMarca}
                 />
 
                 <View style={styles.linhaLadoALado}>
                   <View style={styles.metadeEsq}>
-                    <Text style={styles.label}>Quantidade</Text>
+                    <Text style={styles.label}>{t("mod_qtd")}</Text>
                     <View style={styles.zonaQuantidade}>
                       <Pressable
                         onPress={() => {
@@ -302,10 +305,10 @@ export default function ModalDespensa({
                   </View>
 
                   <View style={styles.metadeDir}>
-                    <Text style={styles.label}>Data de Validade</Text>
+                    <Text style={styles.label}>{t("mod_validade")}</Text>
                     <TextInput
                       style={styles.input}
-                      placeholder="DD/MM/AAAA"
+                      placeholder={t("mod_validade_ex")}
                       value={validade}
                       onChangeText={formatarData}
                       keyboardType="numeric"
@@ -327,7 +330,9 @@ export default function ModalDespensa({
                         },
                       ]}
                     >
-                      <Text style={styles.textoBotao}>Eliminar</Text>
+                      <Text style={styles.textoBotao}>
+                        {t("mod_btn_eliminar")}
+                      </Text>
                     </Pressable>
 
                     <Pressable
@@ -341,7 +346,9 @@ export default function ModalDespensa({
                         },
                       ]}
                     >
-                      <Text style={styles.textoBotao}>Guardar</Text>
+                      <Text style={styles.textoBotao}>
+                        {t("mod_btn_guardar")}
+                      </Text>
                     </Pressable>
                   </View>
                 ) : (
@@ -355,7 +362,9 @@ export default function ModalDespensa({
                       },
                     ]}
                   >
-                    <Text style={styles.textoBotao}>Adicionar à Despensa</Text>
+                    <Text style={styles.textoBotao}>
+                      {t("mod_add_despensa")}
+                    </Text>
                   </Pressable>
                 )}
               </View>
@@ -365,8 +374,8 @@ export default function ModalDespensa({
 
         <AlertaConfirmacao
           visivel={confirmacaoVisivel}
-          titulo="Eliminar Produto"
-          mensagem={`Tem a certeza que pretende remover "${nome}" da despensa?`}
+          titulo={t("msg_titulo_eliminar")}
+          mensagem={t("msg_remover_despensa", { nome: nome })}
           aoCancelar={() => setConfirmacaoVisivel(false)}
           aoConfirmar={confirmarEliminacao}
         />

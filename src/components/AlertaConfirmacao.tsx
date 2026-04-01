@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, Pressable, StyleSheet, Modal } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
 
 interface AlertaConfirmacaoProps {
   visivel: boolean;
@@ -14,13 +15,12 @@ interface AlertaConfirmacaoProps {
 
 export default function AlertaConfirmacao({
   visivel,
-  titulo = "Atenção",
   mensagem,
-  textoCancelar = "Cancelar",
-  textoConfirmar = "Eliminar",
   aoCancelar,
   aoConfirmar,
 }: AlertaConfirmacaoProps) {
+  const { t } = useTranslation();
+
   return (
     <Modal
       transparent={true}
@@ -35,7 +35,7 @@ export default function AlertaConfirmacao({
             <Ionicons name="trash-outline" size={55} color="#f44336" />
           </View>
 
-          <Text style={styles.titulo}>{titulo}</Text>
+          <Text style={styles.titulo}>{t("alert_atencao")}</Text>
           <Text style={styles.mensagem}>{mensagem}</Text>
 
           <View style={styles.botoesContainer}>
@@ -47,7 +47,9 @@ export default function AlertaConfirmacao({
                 pressed && { transform: [{ scale: 0.96 }], opacity: 0.8 },
               ]}
             >
-              <Text style={styles.textoBotaoCancelar}>{textoCancelar}</Text>
+              <Text style={styles.textoBotaoCancelar}>
+                {t("alert_cancelar")}
+              </Text>
             </Pressable>
 
             <Pressable
@@ -58,7 +60,9 @@ export default function AlertaConfirmacao({
                 pressed && { transform: [{ scale: 0.96 }], opacity: 0.8 },
               ]}
             >
-              <Text style={styles.textoBotaoConfirmar}>{textoConfirmar}</Text>
+              <Text style={styles.textoBotaoConfirmar}>
+                {t("alert_eliminar")}
+              </Text>
             </Pressable>
           </View>
         </View>

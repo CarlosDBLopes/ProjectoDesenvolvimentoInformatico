@@ -2,13 +2,13 @@ import React from "react";
 import {
   View,
   Text,
-  TouchableOpacity,
   Pressable,
   StyleSheet,
   Modal,
   TouchableWithoutFeedback,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
 
 interface MenuImagemProps {
   visivel: boolean;
@@ -23,6 +23,8 @@ export default function MenuImagem({
   aoTirarFoto,
   aoEscolherDaGaleria,
 }: MenuImagemProps) {
+  const { t } = useTranslation();
+
   return (
     <Modal
       transparent={true}
@@ -36,7 +38,7 @@ export default function MenuImagem({
           <TouchableWithoutFeedback>
             <View style={styles.caixaMenu}>
               <View style={styles.cabecalhoMenu}>
-                <Text style={styles.tituloMenu}>Adicionar Foto</Text>
+                <Text style={styles.tituloMenu}>{t("menu_add_foto")}</Text>
                 <Pressable
                   onPress={aoFechar}
                   style={({ pressed }) => [
@@ -63,7 +65,7 @@ export default function MenuImagem({
                   >
                     <Ionicons name="camera-outline" size={30} color="#2e7d32" />
                   </View>
-                  <Text style={styles.opcaoTexto}>Tirar Foto</Text>
+                  <Text style={styles.opcaoTexto}>{t("menu_tirar_foto")}</Text>
                 </Pressable>
 
                 <Pressable
@@ -81,7 +83,9 @@ export default function MenuImagem({
                   >
                     <Ionicons name="image-outline" size={30} color="#2196f3" />
                   </View>
-                  <Text style={styles.opcaoTexto}>Escolher da Galeria</Text>
+                  <Text style={styles.opcaoTexto}>
+                    {t("menu_escolher_galeria")}
+                  </Text>
                 </Pressable>
               </View>
             </View>

@@ -2,6 +2,7 @@ import React, { useState, useCallback } from "react";
 import { View, Text, ScrollView, Image, ActivityIndicator } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import Svg, { Circle } from "react-native-svg";
+import { useTranslation } from "react-i18next";
 
 import { styles } from "../styles/DashboardStyles";
 import { supabase } from "../services/supabase";
@@ -29,7 +30,9 @@ const calcularStatusValidade = (validade: string) => {
 };
 
 export default function Dashboard() {
-  const [nomeUtilizador, setNomeUtilizador] = useState("a carregar...");
+  const { t } = useTranslation();
+
+  const [nomeUtilizador, setNomeUtilizador] = useState("");
 
   const [produtos, setProdutos] = useState<any[]>([]);
   const [carregando, setCarregando] = useState(true);
@@ -92,11 +95,13 @@ export default function Dashboard() {
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <View style={styles.zonaTopo}>
-        <Text style={styles.textoOla}>Olá, {nomeUtilizador}!</Text>
+        <Text style={styles.textoOla}>
+          {t("dash_ola", { nome: nomeUtilizador || t("dash_carregando") })}
+        </Text>
         <Text style={styles.textoAlertas}>
-          Tem{" "}
-          <Text style={styles.alertaDestaque}>{produtosVermelhos.length}</Text>{" "}
-          alerta(s) hoje
+          {t("dash_tem")}
+          <Text style={styles.alertaDestaque}>{produtosVermelhos.length}</Text>
+          {t("dash_alertas")}
         </Text>
       </View>
 
@@ -140,19 +145,21 @@ export default function Dashboard() {
           </View>
 
           <Text style={styles.textoPercentagem}>
-            Tem {percentagemVerde}% dos itens{"\n"}dentro do prazo!
+            {t("dash_percentagem", { percent: percentagemVerde })}
           </Text>
 
           <View style={styles.tabelasContainer}>
             <View style={styles.colunaTabela}>
-              <Text style={styles.cabecalhoAmarelo}>A Expirar</Text>
+              <Text style={styles.cabecalhoAmarelo}>{t("dash_a_expirar")}</Text>
               <ScrollView
                 style={styles.listaContainer}
                 nestedScrollEnabled={true}
                 showsVerticalScrollIndicator={true}
               >
                 {produtosAmarelos.length === 0 ? (
-                  <Text style={styles.listaVazia}>Nada a expirar!</Text>
+                  <Text style={styles.listaVazia}>
+                    {t("dash_nada_expirar")}
+                  </Text>
                 ) : (
                   produtosAmarelos.map((item) => (
                     <View key={item.id} style={styles.itemLista}>
@@ -167,14 +174,18 @@ export default function Dashboard() {
             </View>
 
             <View style={styles.colunaTabela}>
-              <Text style={styles.cabecalhoVermelho}>Expirados</Text>
+              <Text style={styles.cabecalhoVermelho}>
+                {t("dash_expirados")}
+              </Text>
               <ScrollView
                 style={styles.listaContainer}
                 nestedScrollEnabled={true}
                 showsVerticalScrollIndicator={true}
               >
                 {produtosVermelhos.length === 0 ? (
-                  <Text style={styles.listaVazia}>Nada expirado!</Text>
+                  <Text style={styles.listaVazia}>
+                    {t("dash_nada_expirado")}
+                  </Text>
                 ) : (
                   produtosVermelhos.map((item) => (
                     <View key={item.id} style={styles.itemLista}>

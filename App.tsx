@@ -11,6 +11,9 @@ import Toast, {
   ToastProps,
 } from "react-native-toast-message";
 
+import "./src/locales/i18n";
+import { useTranslation } from "react-i18next";
+
 import { supabase } from "./src/services/supabase";
 
 import Dashboard from "./src/screens/Dashboard";
@@ -20,6 +23,8 @@ import Login from "./src/screens/Login";
 import Registo from "./src/screens/Registo";
 import RecuperarPassword from "./src/screens/RecuperarPassword";
 import Perfil from "./src/screens/Perfil";
+import CountryFlag from "react-native-country-flag";
+import MenuIdioma from "./src/components/MenuIdioma";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -128,7 +133,43 @@ function BotaoPerfil() {
   );
 }
 
+function BotaoIdioma() {
+  const { i18n } = useTranslation();
+  const [menuVisivel, setMenuVisivel] = useState(false);
+
+  const getIsoCode = () => {
+    if (i18n.language === "en") return "GB";
+    if (i18n.language === "es") return "ES";
+    return "PT";
+  };
+
+  return (
+    <>
+      <Pressable
+        onPress={() => setMenuVisivel(true)}
+        style={({ pressed }) => [
+          { marginRight: 15, justifyContent: "center", alignItems: "center" },
+          pressed && { transform: [{ scale: 0.9 }], opacity: 0.8 },
+        ]}
+      >
+        <CountryFlag
+          isoCode={getIsoCode()}
+          size={24}
+          style={{ borderRadius: 4, borderWidth: 1, borderColor: "#fff" }}
+        />
+      </Pressable>
+
+      <MenuIdioma
+        visivel={menuVisivel}
+        aoFechar={() => setMenuVisivel(false)}
+      />
+    </>
+  );
+}
+
 function MainTabs() {
+  const { t } = useTranslation();
+
   return (
     <Tab.Navigator
       initialRouteName="Dashboard"
@@ -144,6 +185,7 @@ function MainTabs() {
         headerTitleAlign: "center",
 
         headerLeft: () => <BotaoPerfil />,
+        headerRight: () => <BotaoIdioma />,
 
         tabBarStyle: {
           backgroundColor: "#ffffff",
@@ -161,7 +203,8 @@ function MainTabs() {
         name="Despensa"
         component={Despensa}
         options={{
-          headerTitle: "A Minha Despensa",
+          headerTitle: t("tab_despensa"),
+          tabBarLabel: t("tab_despensa"),
           tabBarIcon: ({ color, size }) => (
             <MaterialIcons name="food-bank" size={size} color={color} />
           ),
@@ -172,7 +215,7 @@ function MainTabs() {
         name="Dashboard"
         component={Dashboard}
         options={{
-          headerTitle: "Início",
+          headerTitle: t("tab_inicio"),
           tabBarLabel: () => null,
           tabBarIcon: ({ focused }) => (
             <View
@@ -195,7 +238,8 @@ function MainTabs() {
         name="Compras"
         component={Compras}
         options={{
-          headerTitle: "Lista de Compras",
+          headerTitle: t("tab_compras"),
+          tabBarLabel: t("tab_compras"),
           tabBarIcon: ({ color, size }) => (
             <MaterialIcons name="shopping-cart" size={size} color={color} />
           ),

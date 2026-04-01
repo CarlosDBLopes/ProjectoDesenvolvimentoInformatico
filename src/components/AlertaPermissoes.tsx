@@ -8,6 +8,7 @@ import {
   Linking,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
 
 interface AlertaPermissoesProps {
   visivel: boolean;
@@ -20,6 +21,8 @@ export default function AlertaPermissoes({
   mensagem,
   aoFechar,
 }: AlertaPermissoesProps) {
+  const { t } = useTranslation();
+
   const abrirDefinicoes = () => {
     Linking.openSettings();
     aoFechar();
@@ -39,7 +42,7 @@ export default function AlertaPermissoes({
             <Ionicons name="settings-outline" size={55} color="#2196F3" />
           </View>
 
-          <Text style={styles.titulo}>Permissão Necessária</Text>
+          <Text style={styles.titulo}>{t("perm_titulo")}</Text>
           <Text style={styles.mensagem}>{mensagem}</Text>
 
           <View style={styles.botoesContainer}>
@@ -51,7 +54,9 @@ export default function AlertaPermissoes({
                 pressed && { transform: [{ scale: 0.96 }], opacity: 0.8 },
               ]}
             >
-              <Text style={styles.textoBotaoCancelar}>Agora Não</Text>
+              <Text style={styles.textoBotaoCancelar}>
+                {t("perm_agora_nao")}
+              </Text>
             </Pressable>
 
             <Pressable
@@ -62,7 +67,9 @@ export default function AlertaPermissoes({
                 pressed && { transform: [{ scale: 0.96 }], opacity: 0.8 },
               ]}
             >
-              <Text style={styles.textoBotaoConfirmar}>Abrir Definições</Text>
+              <Text style={styles.textoBotaoConfirmar}>
+                {t("perm_abrir_def")}
+              </Text>
             </Pressable>
           </View>
         </View>
