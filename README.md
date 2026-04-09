@@ -16,6 +16,8 @@ O projeto DespensaSmart surge para resolver o problema comum do desperdício ali
 
 🌍 **Internacionalização (i18n)**: Interface preparada para múltiplos idiomas.
 
+🤖 **Chef IA (Sugestão de Receitas)**: Assistente virtual integrado que cria receitas personalizadas e criativas utilizando apenas os produtos que o utilizador tem atualmente disponíveis na despensa.
+
 ## 🛠️ Tecnologias Utilizadas
 
 📱 **Frontend**: React Native com *framework* Expo
@@ -25,6 +27,8 @@ O projeto DespensaSmart surge para resolver o problema comum do desperdício ali
 💻 **Linguagem**: TypeScript
 
 🎨 **Interface**: Componentes nativos, Modais e animações
+
+🧠 **Inteligência Artificial**: Integração com API de IA para processamento de linguagem natural e criação de receitas
 
 ⚙️ **Bibliotecas Extra**: react-native-vision-camera, react-native-toast-message
 
@@ -36,7 +40,7 @@ O projeto DespensaSmart surge para resolver o problema comum do desperdício ali
 
 **Passo 3**: Abra a pasta do projeto no terminal e instale as dependências (npm install).
 
-**Passo 4**: Crie um ficheiro .env.local na raiz do projeto e preencha as variáveis EXPO_PUBLIC_SUPABASE_URL e EXPO_PUBLIC_SUPABASE_ANON_KEY com as respetivas chaves.
+**Passo 4**: Crie um ficheiro .env.local na raiz do projeto e preencha as variáveis EXPO_PUBLIC_SUPABASE_URL, EXPO_PUBLIC_SUPABASE_ANON_KEY e EXPO_PUBLIC_GEMINI_API_KEY com as respetivas chaves.
 
 **Passo 5**: Inicie o servidor local executando o comando npx expo start.
 
