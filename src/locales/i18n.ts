@@ -43,19 +43,19 @@ const resources = {
       perf_titulo: "O Meu Perfil",
       perf_nome: "Nome",
       perf_email: "Email",
-      perf_btn_alterar_pass: "Alterar Password",
+      perf_btn_alterar_pass: "Alterar Palavra-Passe",
       perf_btn_logout: "Terminar Sessão",
-      perf_nova_pass: "Nova Password",
+      perf_nova_pass: "Nova Palavra-Passe",
       perf_nova_pass_ph: "Mínimo 6 caracteres",
-      perf_conf_pass: "Confirmar Nova Password",
-      perf_conf_pass_ph: "Repita a nova password",
-      perf_btn_atualizar: "Atualizar Password",
-      perf_erro_nova_vazia: "Por favor, insira a nova password!",
-      perf_erro_nova_curta: "A password deve ter pelo menos 6 caracteres!",
-      perf_erro_conf_vazia: "Por favor, confirme a nova password!",
-      perf_erro_conf_diferente: "As passwords não coincidem!",
-      perf_erro_pass_igual: "A nova password não pode ser igual à atual!",
-      perf_sucesso_alterada: "A sua password foi alterada!",
+      perf_conf_pass: "Confirmar Nova Palavra-Passe",
+      perf_conf_pass_ph: "Repita a nova palavra-passe",
+      perf_btn_atualizar: "Atualizar Palavra-Passe",
+      perf_erro_nova_vazia: "Por favor, insira a nova palavra-passe!",
+      perf_erro_nova_curta: "A palavra-passe deve ter pelo menos 6 caracteres!",
+      perf_erro_conf_vazia: "Por favor, confirme a nova palavra-passe!",
+      perf_erro_conf_diferente: "As palavras-passe não coincidem!",
+      perf_erro_pass_igual: "A nova palavra-passe não pode ser igual à atual!",
+      perf_sucesso_alterada: "A sua palavra-passe foi alterada!",
       perf_erro_sair: "Erro ao sair",
 
       // --- MODAIS ---
@@ -161,6 +161,15 @@ const resources = {
       auth_erro_email_valido: "Por favor, insira um email válido!",
       auth_sucesso_email_enviado: "Email Enviado!",
       auth_sucesso_verifique_caixa: "Verifique a sua caixa de entrada.",
+
+      // --- Chef IA ---
+      ia_label: "IA",
+      ia_titulo: "Chef IA",
+      ia_subtitulo: "Receitas inteligentes com a sua despensa",
+      ia_placeholder: "Pergunte ao Chef (ex: O que faço para o jantar?)",
+      ia_escrevendo: "O Chef está a pensar...",
+      ia_erro: "Desculpe, o Chef teve um problema na cozinha.",
+      ia_ola: "Olá! Sou o seu Chef Pessoal. O que vamos cozinhar hoje?",
     },
   },
   en: {
@@ -321,6 +330,15 @@ const resources = {
       auth_erro_email_valido: "Please enter a valid email!",
       auth_sucesso_email_enviado: "Email Sent!",
       auth_sucesso_verifique_caixa: "Check your inbox.",
+
+      // --- Chef IA ---
+      ia_label: "AI",
+      ia_titulo: "Chef AI",
+      ia_subtitulo: "Smart recipes from your pantry",
+      ia_placeholder: "Ask the Chef (e.g., What should I make for dinner?)",
+      ia_escrevendo: "The Chef is thinking...",
+      ia_erro: "Sorry, the Chef had an issue in the kitchen.",
+      ia_ola: "Hello! I'm your Personal Chef. What are we cooking today?",
     },
   },
   es: {
@@ -483,6 +501,15 @@ const resources = {
       auth_erro_email_valido: "¡Por favor, introduzca un correo válido!",
       auth_sucesso_email_enviado: "¡Correo Enviado!",
       auth_sucesso_verifique_caixa: "Revise su bandeja de entrada.",
+
+      // --- Chef IA ---
+      ia_label: "IA",
+      ia_titulo: "Chef IA",
+      ia_subtitulo: "Recetas inteligentes con tu despensa",
+      ia_placeholder: "Pregunta al Chef (ej: ¿Qué hago para cenar?)",
+      ia_escrevendo: "El Chef está pensando...",
+      ia_erro: "Lo siento, el Chef tuvo un problema en la cocina.",
+      ia_ola: "¡Hola! Soy tu Chef Personal. ¿Qué vamos a cocinar hoy?",
     },
   },
 };

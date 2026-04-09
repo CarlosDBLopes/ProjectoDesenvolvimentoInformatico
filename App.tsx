@@ -25,6 +25,7 @@ import RecuperarPassword from "./src/screens/RecuperarPassword";
 import Perfil from "./src/screens/Perfil";
 import CountryFlag from "react-native-country-flag";
 import MenuIdioma from "./src/components/MenuIdioma";
+import BotaoChefIA from "./src/components/BotaoChefIA";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -171,81 +172,85 @@ function MainTabs() {
   const { t } = useTranslation();
 
   return (
-    <Tab.Navigator
-      initialRouteName="Dashboard"
-      screenOptions={{
-        tabBarShowLabel: true,
-        tabBarActiveTintColor: "#2e7d32",
-        tabBarInactiveTintColor: "gray",
+    <>
+      <Tab.Navigator
+        initialRouteName="Dashboard"
+        screenOptions={{
+          tabBarShowLabel: true,
+          tabBarActiveTintColor: "#2e7d32",
+          tabBarInactiveTintColor: "gray",
 
-        headerStyle: {
-          backgroundColor: "#2e7d32",
-        },
-        headerTintColor: "#ffffff",
-        headerTitleAlign: "center",
+          headerStyle: {
+            backgroundColor: "#2e7d32",
+          },
+          headerTintColor: "#ffffff",
+          headerTitleAlign: "center",
 
-        headerLeft: () => <BotaoPerfil />,
-        headerRight: () => <BotaoIdioma />,
+          headerLeft: () => <BotaoPerfil />,
+          headerRight: () => <BotaoIdioma />,
 
-        tabBarStyle: {
-          backgroundColor: "#ffffff",
-          height: 95,
-          paddingBottom: Platform.OS === "ios" ? 30 : 20,
-          elevation: 10,
-          shadowColor: "#000",
-          shadowOffset: { width: 0, height: -2 },
-          shadowOpacity: 0.1,
-          position: "absolute",
-        },
-      }}
-    >
-      <Tab.Screen
-        name="Despensa"
-        component={Despensa}
-        options={{
-          headerTitle: t("tab_despensa"),
-          tabBarLabel: t("tab_despensa"),
-          tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="food-bank" size={size} color={color} />
-          ),
+          tabBarStyle: {
+            backgroundColor: "#ffffff",
+            height: 95,
+            paddingBottom: Platform.OS === "ios" ? 30 : 20,
+            elevation: 10,
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: -2 },
+            shadowOpacity: 0.1,
+            position: "absolute",
+          },
         }}
-      />
+      >
+        <Tab.Screen
+          name="Despensa"
+          component={Despensa}
+          options={{
+            headerTitle: t("tab_despensa"),
+            tabBarLabel: t("tab_despensa"),
+            tabBarIcon: ({ color, size }) => (
+              <MaterialIcons name="food-bank" size={size} color={color} />
+            ),
+          }}
+        />
 
-      <Tab.Screen
-        name="Dashboard"
-        component={Dashboard}
-        options={{
-          headerTitle: t("tab_inicio"),
-          tabBarLabel: () => null,
-          tabBarIcon: ({ focused }) => (
-            <View
-              style={[
-                styles.tabCentral,
-                { backgroundColor: focused ? "#2e7d32" : "#ffffff" },
-              ]}
-            >
-              <Ionicons
-                name="home"
-                size={28}
-                color={focused ? "#ffffff" : "gray"}
-              />
-            </View>
-          ),
-        }}
-      />
+        <Tab.Screen
+          name="Dashboard"
+          component={Dashboard}
+          options={{
+            headerTitle: t("tab_inicio"),
+            tabBarLabel: () => null,
+            tabBarIcon: ({ focused }) => (
+              <View
+                style={[
+                  styles.tabCentral,
+                  { backgroundColor: focused ? "#2e7d32" : "#ffffff" },
+                ]}
+              >
+                <Ionicons
+                  name="home"
+                  size={28}
+                  color={focused ? "#ffffff" : "gray"}
+                />
+              </View>
+            ),
+          }}
+        />
 
-      <Tab.Screen
-        name="Compras"
-        component={Compras}
-        options={{
-          headerTitle: t("tab_compras"),
-          tabBarLabel: t("tab_compras"),
-          tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="shopping-cart" size={size} color={color} />
-          ),
-        }}
-      />
-    </Tab.Navigator>
+        <Tab.Screen
+          name="Compras"
+          component={Compras}
+          options={{
+            headerTitle: t("tab_compras"),
+            tabBarLabel: t("tab_compras"),
+            tabBarIcon: ({ color, size }) => (
+              <MaterialIcons name="shopping-cart" size={size} color={color} />
+            ),
+          }}
+        />
+      </Tab.Navigator>
+
+      <BotaoChefIA />
+    </>
   );
 }
 
@@ -281,6 +286,7 @@ export default function App() {
           </Stack.Navigator>
         )}
       </NavigationContainer>
+
       <Toast config={toastConfig} topOffset={50} />
     </>
   );

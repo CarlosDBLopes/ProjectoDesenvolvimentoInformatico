@@ -373,7 +373,7 @@ export default function Despensa() {
           keyExtractor={(item) => item.id}
           renderItem={desenharCartao}
           contentContainerStyle={styles.lista}
-          ListFooterComponent={<View style={{ height: 110 }} />}
+          ListFooterComponent={<View style={{ height: 170 }} />}
           ListEmptyComponent={
             <View style={{ alignItems: "center", marginTop: 60 }}>
               <MaterialIcons name="food-bank" size={60} color="#ccc" />

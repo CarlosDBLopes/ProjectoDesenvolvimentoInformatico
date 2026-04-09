@@ -56,7 +56,7 @@ export const styles = StyleSheet.create({
     color: "#333",
     textAlign: "center",
     marginTop: 20,
-    marginBottom: 55,
+    marginBottom: 50,
   },
   tabelasContainer: {
     flexDirection: "row",
