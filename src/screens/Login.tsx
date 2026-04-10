@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
+  Keyboard,
 } from "react-native";
 import Toast from "react-native-toast-message";
 import { Ionicons } from "@expo/vector-icons";
@@ -28,6 +29,22 @@ export default function Login({ navigation }: any) {
   const [emailErro, setEmailErro] = useState("");
   const [passwordErro, setPasswordErro] = useState("");
   const [erroGeral, setErroGeral] = useState("");
+
+  const [tecladoAberto, setTecladoAberto] = useState(false);
+
+  useEffect(() => {
+    const mostrarSub = Keyboard.addListener("keyboardDidShow", () =>
+      setTecladoAberto(true),
+    );
+    const esconderSub = Keyboard.addListener("keyboardDidHide", () =>
+      setTecladoAberto(false),
+    );
+
+    return () => {
+      mostrarSub.remove();
+      esconderSub.remove();
+    };
+  }, []);
 
   const validarFormulario = () => {
     let valido = true;
@@ -55,6 +72,7 @@ export default function Login({ navigation }: any) {
     if (!validarFormulario()) return;
 
     setCarregando(true);
+    Keyboard.dismiss();
 
     const { error } = await supabase.auth.signInWithPassword({
       email,
@@ -76,7 +94,8 @@ export default function Login({ navigation }: any) {
   return (
     <KeyboardAvoidingView
       style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      behavior="padding"
+      enabled={Platform.OS === "ios" ? true : tecladoAberto}
     >
       <BotaoIdiomaFlutuante />
 
@@ -116,6 +135,8 @@ export default function Login({ navigation }: any) {
               setEmail(texto);
               setEmailErro("");
             }}
+            cursorColor="#2e7d32"
+            selectionColor="rgba(46, 125, 50, 0.3)"
           />
         </View>
         {emailErro ? <Text style={styles.textoErro}>{emailErro}</Text> : null}
@@ -142,6 +163,8 @@ export default function Login({ navigation }: any) {
               setPassword(texto);
               setPasswordErro("");
             }}
+            cursorColor="#2e7d32"
+            selectionColor="rgba(46, 125, 50, 0.3)"
           />
           <Pressable
             onPress={() => setMostrarPassword(!mostrarPassword)}

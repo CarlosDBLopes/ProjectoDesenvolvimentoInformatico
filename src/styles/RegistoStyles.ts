@@ -26,7 +26,7 @@ export const styles = StyleSheet.create({
   },
   zonaTexto: {
     marginBottom: 30,
-    marginTop: 50,
+    marginTop: 100,
   },
   titulo: {
     fontSize: 32,

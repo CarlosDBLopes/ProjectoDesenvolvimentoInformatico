@@ -64,6 +64,22 @@ export default function ModalDespensa({
   const [mensagemPermissao, setMensagemPermissao] = useState("");
   const [menuImagemVisivel, setMenuImagemVisivel] = useState(false);
 
+  const [tecladoAberto, setTecladoAberto] = useState(false);
+
+  useEffect(() => {
+    const mostrarSub = Keyboard.addListener("keyboardDidShow", () =>
+      setTecladoAberto(true),
+    );
+    const esconderSub = Keyboard.addListener("keyboardDidHide", () =>
+      setTecladoAberto(false),
+    );
+
+    return () => {
+      mostrarSub.remove();
+      esconderSub.remove();
+    };
+  }, []);
+
   useEffect(() => {
     if (produtoEdicao) {
       setNome(produtoEdicao.nome);
@@ -183,13 +199,18 @@ export default function ModalDespensa({
     >
       <KeyboardAvoidingView
         style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.select({ ios: 0, android: -47 })}
+        behavior="padding"
+        enabled={Platform.OS === "ios" ? true : tecladoAberto}
       >
         <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
           <View style={styles.fundoEscuro}>
             <TouchableWithoutFeedback>
-              <View style={styles.cartaoModal}>
+              <View
+                style={[
+                  styles.cartaoModal,
+                  tecladoAberto && { paddingBottom: 20 },
+                ]}
+              >
                 <View style={styles.cabecalho}>
                   <Text style={styles.titulo}>
                     {modoEdicao ? t("mod_edit_produto") : t("mod_add_despensa")}
@@ -242,6 +263,8 @@ export default function ModalDespensa({
                     setNome(texto);
                     setNomeErro("");
                   }}
+                  cursorColor="#2e7d32"
+                  selectionColor="rgba(46, 125, 50, 0.3)"
                 />
                 {nomeErro ? (
                   <Text
@@ -264,6 +287,8 @@ export default function ModalDespensa({
                   placeholder={t("mod_marca_ex")}
                   value={marca}
                   onChangeText={setMarca}
+                  cursorColor="#2e7d32"
+                  selectionColor="rgba(46, 125, 50, 0.3)"
                 />
 
                 <View style={styles.linhaLadoALado}>
@@ -313,6 +338,8 @@ export default function ModalDespensa({
                       onChangeText={formatarData}
                       keyboardType="numeric"
                       maxLength={10}
+                      cursorColor="#2e7d32"
+                      selectionColor="rgba(46, 125, 50, 0.3)"
                     />
                   </View>
                 </View>

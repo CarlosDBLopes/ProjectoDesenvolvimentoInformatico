@@ -39,6 +39,22 @@ export default function Perfil({ navigation }: any) {
   const [confirmarPasswordErro, setConfirmarPasswordErro] = useState("");
   const [gravando, setGravando] = useState(false);
 
+  const [tecladoAberto, setTecladoAberto] = useState(false);
+
+  useEffect(() => {
+    const mostrarSub = Keyboard.addListener("keyboardDidShow", () =>
+      setTecladoAberto(true),
+    );
+    const esconderSub = Keyboard.addListener("keyboardDidHide", () =>
+      setTecladoAberto(false),
+    );
+
+    return () => {
+      mostrarSub.remove();
+      esconderSub.remove();
+    };
+  }, []);
+
   useEffect(() => {
     importarDados();
   }, []);
@@ -228,13 +244,18 @@ export default function Perfil({ navigation }: any) {
       >
         <KeyboardAvoidingView
           style={{ flex: 1 }}
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          keyboardVerticalOffset={Platform.select({ ios: 0, android: -47 })}
+          behavior="padding"
+          enabled={Platform.OS === "ios" ? true : tecladoAberto}
         >
           <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
             <View style={styles.fundoEscuro}>
               <TouchableWithoutFeedback>
-                <View style={styles.cartaoModal}>
+                <View
+                  style={[
+                    styles.cartaoModal,
+                    tecladoAberto && { paddingBottom: 20 },
+                  ]}
+                >
                   <View style={styles.cabecalhoModal}>
                     <Text style={styles.tituloModal}>
                       {t("perf_btn_alterar_pass")}
@@ -275,6 +296,8 @@ export default function Perfil({ navigation }: any) {
                         setNovaPassword(texto);
                         setNovaPasswordErro("");
                       }}
+                      cursorColor="#2e7d32"
+                      selectionColor="rgba(46, 125, 50, 0.3)"
                     />
                     <Pressable
                       onPress={() =>
@@ -323,6 +346,8 @@ export default function Perfil({ navigation }: any) {
                         setConfirmarPassword(texto);
                         setConfirmarPasswordErro("");
                       }}
+                      cursorColor="#2e7d32"
+                      selectionColor="rgba(46, 125, 50, 0.3)"
                     />
                     <Pressable
                       onPress={() =>

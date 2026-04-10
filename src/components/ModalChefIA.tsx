@@ -36,6 +36,22 @@ export default function ModalChefIA({ visivel, aoFechar }: ModalChefIAProps) {
   const [carregando, setCarregando] = useState(false);
   const [mensagens, setMensagens] = useState<Mensagem[]>([]);
 
+  const [tecladoAberto, setTecladoAberto] = useState(false);
+
+  useEffect(() => {
+    const mostrarSub = Keyboard.addListener("keyboardDidShow", () =>
+      setTecladoAberto(true),
+    );
+    const esconderSub = Keyboard.addListener("keyboardDidHide", () =>
+      setTecladoAberto(false),
+    );
+
+    return () => {
+      mostrarSub.remove();
+      esconderSub.remove();
+    };
+  }, []);
+
   useEffect(() => {
     if (visivel) {
       setMensagens([{ id: "saudacao", texto: t("ia_ola"), remetente: "ia" }]);
@@ -94,8 +110,8 @@ export default function ModalChefIA({ visivel, aoFechar }: ModalChefIAProps) {
     >
       <KeyboardAvoidingView
         style={styles.fundoEscuro}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.select({ ios: 0, android: -47 })}
+        behavior="padding"
+        enabled={Platform.OS === "ios" ? true : tecladoAberto}
       >
         <View style={styles.cartaoModal}>
           <View style={styles.cabecalho}>
@@ -156,7 +172,9 @@ export default function ModalChefIA({ visivel, aoFechar }: ModalChefIAProps) {
             )}
           </ScrollView>
 
-          <View style={styles.areaInput}>
+          <View
+            style={[styles.areaInput, tecladoAberto && { paddingBottom: 20 }]}
+          >
             <TextInput
               style={styles.input}
               placeholder={t("ia_placeholder")}
@@ -164,6 +182,8 @@ export default function ModalChefIA({ visivel, aoFechar }: ModalChefIAProps) {
               onChangeText={setInput}
               multiline
               maxLength={200}
+              cursorColor="#2e7d32"
+              selectionColor="rgba(46, 125, 50, 0.3)"
             />
             <Pressable
               onPress={enviarMensagem}

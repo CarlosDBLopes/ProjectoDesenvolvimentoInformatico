@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
+  Keyboard,
 } from "react-native";
 import Toast from "react-native-toast-message";
 import { Ionicons } from "@expo/vector-icons";
@@ -22,6 +23,22 @@ export default function RecuperarPassword({ navigation }: any) {
   const [email, setEmail] = useState("");
   const [carregando, setCarregando] = useState(false);
   const [emailErro, setEmailErro] = useState("");
+
+  const [tecladoAberto, setTecladoAberto] = useState(false);
+
+  useEffect(() => {
+    const mostrarSub = Keyboard.addListener("keyboardDidShow", () =>
+      setTecladoAberto(true),
+    );
+    const esconderSub = Keyboard.addListener("keyboardDidHide", () =>
+      setTecladoAberto(false),
+    );
+
+    return () => {
+      mostrarSub.remove();
+      esconderSub.remove();
+    };
+  }, []);
 
   const pedirRecuperacao = async () => {
     setEmailErro("");
@@ -56,7 +73,8 @@ export default function RecuperarPassword({ navigation }: any) {
   return (
     <KeyboardAvoidingView
       style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      behavior="padding"
+      enabled={Platform.OS === "ios" ? true : tecladoAberto}
     >
       <BotaoIdiomaFlutuante />
 
@@ -99,6 +117,8 @@ export default function RecuperarPassword({ navigation }: any) {
               setEmail(texto);
               setEmailErro("");
             }}
+            cursorColor="#2e7d32"
+            selectionColor="rgba(46, 125, 50, 0.3)"
           />
         </View>
         {emailErro ? <Text style={styles.textoErro}>{emailErro}</Text> : null}

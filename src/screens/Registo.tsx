@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  Keyboard,
 } from "react-native";
 import Toast from "react-native-toast-message";
 import { Ionicons } from "@expo/vector-icons";
@@ -35,6 +36,22 @@ export default function Registo({ navigation }: any) {
   const [passwordErro, setPasswordErro] = useState("");
   const [confirmarPasswordErro, setConfirmarPasswordErro] = useState("");
   const [erroGeral, setErroGeral] = useState("");
+
+  const [tecladoAberto, setTecladoAberto] = useState(false);
+
+  useEffect(() => {
+    const mostrarSub = Keyboard.addListener("keyboardDidShow", () =>
+      setTecladoAberto(true),
+    );
+    const esconderSub = Keyboard.addListener("keyboardDidHide", () =>
+      setTecladoAberto(false),
+    );
+
+    return () => {
+      mostrarSub.remove();
+      esconderSub.remove();
+    };
+  }, []);
 
   const validarFormulario = () => {
     let valido = true;
@@ -124,13 +141,18 @@ export default function Registo({ navigation }: any) {
   return (
     <KeyboardAvoidingView
       style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      behavior="padding"
+      enabled={Platform.OS === "ios" ? true : tecladoAberto}
     >
       <BotaoIdiomaFlutuante />
 
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scroll}
+        contentContainerStyle={[
+          styles.scroll,
+          { paddingBottom: tecladoAberto ? 20 : 100 },
+        ]}
+        keyboardShouldPersistTaps="handled"
       >
         <Pressable
           onPress={() => navigation.goBack()}
@@ -173,6 +195,8 @@ export default function Registo({ navigation }: any) {
                 setNome(texto);
                 setNomeErro("");
               }}
+              cursorColor="#2e7d32"
+              selectionColor="rgba(46, 125, 50, 0.3)"
             />
           </View>
           {nomeErro ? <Text style={styles.textoErro}>{nomeErro}</Text> : null}
@@ -199,6 +223,8 @@ export default function Registo({ navigation }: any) {
                 setEmail(texto);
                 setEmailErro("");
               }}
+              cursorColor="#2e7d32"
+              selectionColor="rgba(46, 125, 50, 0.3)"
             />
           </View>
           {emailErro ? <Text style={styles.textoErro}>{emailErro}</Text> : null}
@@ -225,6 +251,8 @@ export default function Registo({ navigation }: any) {
                 setPassword(texto);
                 setPasswordErro("");
               }}
+              cursorColor="#2e7d32"
+              selectionColor="rgba(46, 125, 50, 0.3)"
             />
             <Pressable
               onPress={() => setMostrarPassword(!mostrarPassword)}
@@ -266,6 +294,8 @@ export default function Registo({ navigation }: any) {
                 setConfirmarPassword(texto);
                 setConfirmarPasswordErro("");
               }}
+              cursorColor="#2e7d32"
+              selectionColor="rgba(46, 125, 50, 0.3)"
             />
             <Pressable
               onPress={() =>

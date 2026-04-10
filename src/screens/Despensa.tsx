@@ -324,6 +324,8 @@ export default function Despensa() {
             placeholder={t("desp_pesquisar")}
             value={pesquisa}
             onChangeText={(texto) => setPesquisa(texto)}
+            cursorColor="#2e7d32"
+            selectionColor="rgba(46, 125, 50, 0.3)"
           />
         </View>
 

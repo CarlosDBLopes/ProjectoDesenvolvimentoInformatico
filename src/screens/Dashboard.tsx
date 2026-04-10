@@ -193,6 +193,8 @@ export default function Dashboard() {
                     </View>
                   ))
                 )}
+
+                <View style={{ height: 10 }} />
               </ScrollView>
             </View>
           </View>
