@@ -28,6 +28,7 @@ export default function AlertaConfirmacao({
       animationType="fade"
       statusBarTranslucent={true}
       navigationBarTranslucent={true}
+      onRequestClose={aoCancelar}
     >
       <View style={styles.fundoOverlay}>
         <View style={styles.caixaAlerta}>

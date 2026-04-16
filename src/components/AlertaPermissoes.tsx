@@ -35,6 +35,7 @@ export default function AlertaPermissoes({
       animationType="fade"
       statusBarTranslucent={true}
       navigationBarTranslucent={true}
+      onRequestClose={aoFechar}
     >
       <View style={styles.fundoOverlay}>
         <View style={styles.caixaAlerta}>

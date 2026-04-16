@@ -10,6 +10,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   Image,
+  BackHandler,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
@@ -79,6 +80,35 @@ export default function ModalDespensa({
       esconderSub.remove();
     };
   }, []);
+
+  useEffect(() => {
+    if (visivel) {
+      const aoPressionarVoltar = () => {
+        // Se o menu da imagem estiver aberto, fecha só o menu
+        if (menuImagemVisivel) {
+          setMenuImagemVisivel(false);
+          return true;
+        }
+        // Se houver um alerta, fecha-o
+        if (confirmacaoVisivel || alertaPermissaoVisivel) {
+          setConfirmacaoVisivel(false);
+          setAlertaPermissaoVisivel(false);
+          return true;
+        }
+
+        // Caso contrário, fecha o modal principal da despensa
+        limparEFechar();
+        return true; // O 'true' diz ao Android: "Não te preocupes, nós tratámos disto!"
+      };
+
+      const backHandler = BackHandler.addEventListener(
+        "hardwareBackPress",
+        aoPressionarVoltar,
+      );
+
+      return () => backHandler.remove();
+    }
+  }, [visivel, menuImagemVisivel, confirmacaoVisivel, alertaPermissaoVisivel]);
 
   useEffect(() => {
     if (produtoEdicao) {

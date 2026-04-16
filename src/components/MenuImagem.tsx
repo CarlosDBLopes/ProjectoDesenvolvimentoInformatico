@@ -32,6 +32,7 @@ export default function MenuImagem({
       animationType="slide"
       statusBarTranslucent={true}
       navigationBarTranslucent={true}
+      onRequestClose={aoFechar}
     >
       <TouchableWithoutFeedback onPress={aoFechar}>
         <View style={styles.fundoOverlay}>

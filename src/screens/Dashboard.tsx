@@ -154,7 +154,7 @@ export default function Dashboard() {
               <ScrollView
                 style={styles.listaContainer}
                 nestedScrollEnabled={true}
-                showsVerticalScrollIndicator={true}
+                showsVerticalScrollIndicator={false}
               >
                 {produtosAmarelos.length === 0 ? (
                   <Text style={styles.listaVazia}>
@@ -180,7 +180,7 @@ export default function Dashboard() {
               <ScrollView
                 style={styles.listaContainer}
                 nestedScrollEnabled={true}
-                showsVerticalScrollIndicator={true}
+                showsVerticalScrollIndicator={false}
               >
                 {produtosVermelhos.length === 0 ? (
                   <Text style={styles.listaVazia}>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   View,
   Text,
@@ -30,6 +30,8 @@ export default function MenuIdioma({ visivel, aoFechar }: MenuIdiomaProps) {
       visible={visivel}
       animationType="fade"
       statusBarTranslucent={true}
+      navigationBarTranslucent={true}
+      onRequestClose={aoFechar}
     >
       <TouchableWithoutFeedback onPress={aoFechar}>
         <View style={styles.fundoOverlay}>
