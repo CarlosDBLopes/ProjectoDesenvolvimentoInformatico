@@ -44,7 +44,8 @@ export const styles = StyleSheet.create({
   imagemProduto: {
     width: 90,
     height: 90,
-    borderRadius: 12,
+    borderRadius: 15,
+    backgroundColor: "#ffffff",
   },
   label: {
     fontSize: 14,

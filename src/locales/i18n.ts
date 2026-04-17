@@ -162,7 +162,7 @@ const resources = {
       auth_sucesso_email_enviado: "Email Enviado!",
       auth_sucesso_verifique_caixa: "Verifique a sua caixa de entrada.",
 
-      // --- Chef IA ---
+      // --- CHEF IA ---
       ia_label: "IA",
       ia_titulo: "Chef IA",
       ia_subtitulo: "Receitas inteligentes com a sua despensa",
@@ -170,6 +170,17 @@ const resources = {
       ia_escrevendo: "O Chef está a pensar...",
       ia_erro: "Desculpe, o Chef teve um problema na cozinha.",
       ia_ola: "Olá! Sou o seu Chef Pessoal. O que vamos cozinhar hoje?",
+
+      // --- CÓDIGO DE BARRAS ---
+      scan_instrucao: "Alinhe o código de barras",
+      perm_camera_negada: "Sem permissão para usar a câmara.",
+      perm_pedir: "Pedir Permissão",
+      mod_btn_fechar: "Fechar",
+      scan_a_procurar: "A procurar produto...",
+      scan_encontrado_titulo: "Sucesso!",
+      scan_encontrado: "Produto encontrado!",
+      scan_nao_encontrado: "Produto não encontrado.",
+      scan_nao_encontrado_desc: "Por favor, insira as informações manualmente.",
     },
   },
   en: {
@@ -331,7 +342,7 @@ const resources = {
       auth_sucesso_email_enviado: "Email Sent!",
       auth_sucesso_verifique_caixa: "Check your inbox.",
 
-      // --- Chef IA ---
+      // --- CHEF IA ---
       ia_label: "AI",
       ia_titulo: "Chef AI",
       ia_subtitulo: "Smart recipes from your pantry",
@@ -339,6 +350,17 @@ const resources = {
       ia_escrevendo: "The Chef is thinking...",
       ia_erro: "Sorry, the Chef had an issue in the kitchen.",
       ia_ola: "Hello! I'm your Personal Chef. What are we cooking today?",
+
+      // --- CÓDIGO DE BARRAS ---
+      scan_instrucao: "Align the barcode",
+      perm_camera_negada: "No camera permission.",
+      perm_pedir: "Request Permission",
+      mod_btn_fechar: "Close",
+      scan_a_procurar: "Searching the product...",
+      scan_encontrado_titulo: "Success!",
+      scan_encontrado: "Product found!",
+      scan_nao_encontrado: "Product not found.",
+      scan_nao_encontrado_desc: "Please enter the information manually.",
     },
   },
   es: {
@@ -502,7 +524,7 @@ const resources = {
       auth_sucesso_email_enviado: "¡Correo Enviado!",
       auth_sucesso_verifique_caixa: "Revise su bandeja de entrada.",
 
-      // --- Chef IA ---
+      // --- CHEF IA ---
       ia_label: "IA",
       ia_titulo: "Chef IA",
       ia_subtitulo: "Recetas inteligentes con tu despensa",
@@ -510,6 +532,18 @@ const resources = {
       ia_escrevendo: "El Chef está pensando...",
       ia_erro: "Lo siento, el Chef tuvo un problema en la cocina.",
       ia_ola: "¡Hola! Soy tu Chef Personal. ¿Qué vamos a cocinar hoy?",
+
+      // --- CÓDIGO DE BARRAS ---
+      scan_instrucao: "Alinee o código de barras",
+      perm_camera_negada: "Sin permiso para usar la cámara.",
+      perm_pedir: "Solicitar Permiso",
+      mod_btn_fechar: "Cerrar",
+      scan_a_procurar: "Buscando producto...",
+      scan_encontrado_titulo: "¡Éxito!",
+      scan_encontrado: "¡Producto encontrado!",
+      scan_nao_encontrado: "Producto no encontrado",
+      scan_nao_encontrado_desc:
+        "Por favor, inserte la información manualmente.",
     },
   },
 };

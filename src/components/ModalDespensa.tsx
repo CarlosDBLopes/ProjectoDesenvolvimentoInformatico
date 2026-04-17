@@ -84,21 +84,18 @@ export default function ModalDespensa({
   useEffect(() => {
     if (visivel) {
       const aoPressionarVoltar = () => {
-        // Se o menu da imagem estiver aberto, fecha só o menu
         if (menuImagemVisivel) {
           setMenuImagemVisivel(false);
           return true;
         }
-        // Se houver um alerta, fecha-o
         if (confirmacaoVisivel || alertaPermissaoVisivel) {
           setConfirmacaoVisivel(false);
           setAlertaPermissaoVisivel(false);
           return true;
         }
 
-        // Caso contrário, fecha o modal principal da despensa
         limparEFechar();
-        return true; // O 'true' diz ao Android: "Não te preocupes, nós tratámos disto!"
+        return true;
       };
 
       const backHandler = BackHandler.addEventListener(
@@ -267,6 +264,7 @@ export default function ModalDespensa({
                       <Image
                         source={{ uri: imagem }}
                         style={styles.imagemProduto}
+                        resizeMode="contain"
                       />
                     ) : (
                       <Ionicons name="camera-outline" size={32} color="#aaa" />

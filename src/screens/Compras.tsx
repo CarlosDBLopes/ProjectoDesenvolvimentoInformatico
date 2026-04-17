@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useFocusEffect } from "@react-navigation/native";
 import Toast from "react-native-toast-message";
 import { useTranslation } from "react-i18next";
@@ -16,6 +17,8 @@ import { useTranslation } from "react-i18next";
 import { styles } from "../styles/ComprasStyles";
 import ModalCompras from "../components/ModalCompras";
 import AlertaConfirmacao from "../components/AlertaConfirmacao";
+import ScannerCodigo from "../components/ScannerCodigoBarras";
+import { procurarProdutoPorCodigo } from "../services/openFoodFacts";
 import { supabase } from "../services/supabase";
 
 export default function Compras() {
@@ -23,6 +26,7 @@ export default function Compras() {
 
   const [pesquisa, setPesquisa] = useState("");
   const [modalVisivel, setModalVisivel] = useState(false);
+  const [scannerVisivel, setScannerVisivel] = useState(false);
   const [produtoEditando, setProdutoEditando] = useState<any>(null);
 
   const [confirmacaoVisivel, setConfirmacaoVisivel] = useState(false);
@@ -279,18 +283,35 @@ export default function Compras() {
           />
         </View>
 
-        <Pressable
-          onPress={() => {
-            setProdutoEditando(null);
-            setModalVisivel(true);
-          }}
-          style={({ pressed }) => [
-            styles.botaoAdicionar,
-            pressed && { transform: [{ scale: 0.9 }], opacity: 0.85 },
-          ]}
-        >
-          <Ionicons name="add" size={28} color="#fff" />
-        </Pressable>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
+          <Pressable
+            onPress={() => {
+              setProdutoEditando(null);
+              setModalVisivel(true);
+            }}
+            style={({ pressed }) => [
+              styles.botaoAdicionar,
+              pressed && { transform: [{ scale: 0.9 }], opacity: 0.85 },
+            ]}
+          >
+            <Ionicons name="add" size={28} color="#fff" />
+          </Pressable>
+
+          <Pressable
+            onPress={() => setScannerVisivel(true)}
+            style={({ pressed }) => [
+              styles.botaoAdicionar,
+              { backgroundColor: "#fff" },
+              pressed && { transform: [{ scale: 0.9 }], opacity: 0.85 },
+            ]}
+          >
+            <MaterialCommunityIcons
+              name="barcode-scan"
+              size={28}
+              color="#2e7d32"
+            />
+          </Pressable>
+        </View>
       </View>
 
       <View style={styles.cabecalhoTabela}>
@@ -352,6 +373,48 @@ export default function Compras() {
         aoCancelar={() => setConfirmacaoVisivel(false)}
         aoConfirmar={confirmarRemocao}
       />
+
+      {scannerVisivel && (
+        <ScannerCodigo
+          visivel={scannerVisivel}
+          aoFechar={() => setScannerVisivel(false)}
+          aoLerCodigo={async (codigo) => {
+            Toast.show({
+              type: "info",
+              text1: t("scan_a_procurar"),
+            });
+
+            const dadosProduto = await procurarProdutoPorCodigo(codigo);
+
+            setScannerVisivel(false);
+
+            if (dadosProduto) {
+              Toast.show({
+                type: "success",
+                text1: t("scan_encontrado_titulo"),
+                text2: t("scan_encontrado"),
+              });
+
+              setProdutoEditando({
+                id: "",
+                nome: dadosProduto.nome,
+                marca: dadosProduto.marca,
+                quantidade: 1,
+              });
+
+              setTimeout(() => {
+                setModalVisivel(true);
+              }, 400);
+            } else {
+              Toast.show({
+                type: "error",
+                text1: t("scan_nao_encontrado"),
+                text2: t("scan_nao_encontrado_desc"),
+              });
+            }
+          }}
+        />
+      )}
     </View>
   );
 }

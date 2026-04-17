@@ -95,7 +95,7 @@ export const styles = StyleSheet.create({
   caixaImagemPlaceholder: {
     width: 40,
     height: 40,
-    backgroundColor: "#f1f3f5",
+    backgroundColor: "#ffffff",
     borderRadius: 8,
     justifyContent: "center",
     alignItems: "center",

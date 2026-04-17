@@ -30,6 +30,14 @@
       "predictiveBackGestureEnabled": false,
       "package": "com.carlos.DespensaSmart"
     },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "A DespensaSmart precisa de acesso à câmara para ler os códigos de barras dos produtos."
+        }
+      ]
+    ],
     "web": {
       "favicon": "./assets/favicon.png"
     }
