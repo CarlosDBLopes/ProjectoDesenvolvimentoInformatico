@@ -15,7 +15,6 @@ export const procurarProdutoPorCodigo = async (codigo: string) => {
 
     return null;
   } catch (erro) {
-    console.error("Erro ao procurar produto no OpenFoodFacts:", erro);
     return null;
   }
 };

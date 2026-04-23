@@ -45,7 +45,6 @@ export default function Compras() {
       .order("created_at", { ascending: false });
 
     if (error) {
-      console.error("Erro ao importar lista de compras:", error.message);
       Toast.show({
         type: "error",
         text1: t("toast_erro"),
@@ -189,7 +188,7 @@ export default function Compras() {
       (item) =>
         item.nome.toLowerCase().includes(pesquisa.toLowerCase()) ||
         (item.marca &&
-          item.marca.toLowerCase().includes(pesquisa.toLowerCase())), // <-- PESQUISA PELA MARCA
+          item.marca.toLowerCase().includes(pesquisa.toLowerCase())),
     )
     .sort((a, b) => {
       if (a.comprado === b.comprado) return 0;

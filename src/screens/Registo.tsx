@@ -124,7 +124,6 @@ export default function Registo({ navigation }: any) {
         .insert([{ id: data.user.id, nome }]);
 
       if (perfilError) {
-        console.error("Erro ao criar perfil:", perfilError);
         setErroGeral(t("auth_erro_criar_perfil"));
       } else {
         Toast.show({
