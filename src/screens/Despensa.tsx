@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -29,7 +29,7 @@ const extrairNomeFicheiro = (url: string) => {
   return partes[partes.length - 1];
 };
 
-export default function Despensa() {
+export default function Despensa({ navigation, route }: any) {
   const { t } = useTranslation();
 
   const [pesquisa, setPesquisa] = useState("");
@@ -65,6 +65,21 @@ export default function Despensa() {
       importarProdutos();
     }, []),
   );
+
+  useEffect(() => {
+    if (produtos.length > 0 && route?.params?.produtoDestacadoId) {
+      const idProcurado = route.params.produtoDestacadoId;
+
+      const produtoAlvo = produtos.find((p) => p.id === idProcurado);
+
+      if (produtoAlvo) {
+        setProdutoEditando(produtoAlvo);
+        setModalVisivel(true);
+
+        navigation.setParams({ produtoDestacadoId: undefined });
+      }
+    }
+  }, [route?.params?.produtoDestacadoId, produtos]);
 
   const calcularStatusValidade = (validade?: string) => {
     if (!validade || validade.length < 10) return "verde";

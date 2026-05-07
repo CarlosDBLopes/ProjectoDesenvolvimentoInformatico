@@ -1,5 +1,12 @@
 import React, { useState, useCallback } from "react";
-import { View, Text, ScrollView, Image, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  Image,
+  ActivityIndicator,
+  Pressable,
+} from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import Svg, { Circle } from "react-native-svg";
 import { useTranslation } from "react-i18next";
@@ -29,7 +36,7 @@ const calcularStatusValidade = (validade: string) => {
   return "verde";
 };
 
-export default function Dashboard() {
+export default function Dashboard({ navigation }: any) {
   const { t } = useTranslation();
 
   const [nomeUtilizador, setNomeUtilizador] = useState("");
@@ -162,12 +169,26 @@ export default function Dashboard() {
                   </Text>
                 ) : (
                   produtosAmarelos.map((item) => (
-                    <View key={item.id} style={styles.itemLista}>
+                    <Pressable
+                      key={item.id}
+                      style={({ pressed }) => [
+                        styles.itemLista,
+                        pressed && {
+                          opacity: 0.7,
+                          transform: [{ scale: 0.98 }],
+                        },
+                      ]}
+                      onPress={() =>
+                        navigation.navigate("Despensa", {
+                          produtoDestacadoId: item.id,
+                        })
+                      }
+                    >
                       <Text style={styles.nomeItem}>{item.nome}</Text>
                       <Text style={styles.diasItem}>
                         {item.validade.slice(0, 5)}
                       </Text>
-                    </View>
+                    </Pressable>
                   ))
                 )}
               </ScrollView>
@@ -188,9 +209,23 @@ export default function Dashboard() {
                   </Text>
                 ) : (
                   produtosVermelhos.map((item) => (
-                    <View key={item.id} style={styles.itemLista}>
+                    <Pressable
+                      key={item.id}
+                      style={({ pressed }) => [
+                        styles.itemLista,
+                        pressed && {
+                          opacity: 0.7,
+                          transform: [{ scale: 0.98 }],
+                        },
+                      ]}
+                      onPress={() =>
+                        navigation.navigate("Despensa", {
+                          produtoDestacadoId: item.id,
+                        })
+                      }
+                    >
                       <Text style={styles.nomeItem}>{item.nome}</Text>
-                    </View>
+                    </Pressable>
                   ))
                 )}
 
