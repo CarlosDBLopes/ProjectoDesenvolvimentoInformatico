@@ -64,6 +64,9 @@ export default function Registo({ navigation }: any) {
     if (!nome.trim()) {
       setNomeErro(t("auth_erro_nome_vazio"));
       valido = false;
+    } else if (!/^[a-zA-ZÀ-ÿ\s]+$/.test(nome)) {
+      setNomeErro(t("auth_erro_nome_invalido"));
+      valido = false;
     }
 
     if (!email.trim()) {

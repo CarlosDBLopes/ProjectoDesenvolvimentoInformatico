@@ -1,5 +1,3 @@
-// src/components/BotaoChefIA.tsx
-
 import React, { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -23,7 +21,6 @@ export default function BotaoChefIA() {
         <View style={styles.content}>
           <MaterialCommunityIcons name="chef-hat" size={28} color="#fff" />
 
-          {/* Adicionamos o Texto traduzido aqui */}
           <Text style={styles.label}>{t("ia_label")}</Text>
         </View>
       </Pressable>

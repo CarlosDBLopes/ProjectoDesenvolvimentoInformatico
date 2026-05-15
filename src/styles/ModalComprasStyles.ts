@@ -57,8 +57,9 @@ export const styles = StyleSheet.create({
   textoQtd: {
     fontSize: 18,
     fontWeight: "bold",
-    marginHorizontal: 20,
     color: "#333",
+    minWidth: 45,
+    textAlign: "center",
   },
   botaoGuardar: {
     backgroundColor: "#2e7d32",

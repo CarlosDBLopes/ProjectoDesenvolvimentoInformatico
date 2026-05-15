@@ -43,6 +43,33 @@ interface ModalDespensaProps {
   } | null;
 }
 
+const validarData = (data: string) => {
+  if (!data) return true;
+  if (data.length !== 10) return false;
+
+  const [dia, mes, ano] = data.split("/").map((num) => parseInt(num, 10));
+
+  if (isNaN(dia) || isNaN(mes) || isNaN(ano)) return false;
+  if (mes < 1 || mes > 12 || ano < 2000 || ano > 2100) return false;
+
+  const diasPorMes = [
+    31,
+    (ano % 4 === 0 && ano % 100 !== 0) || ano % 400 === 0 ? 29 : 28,
+    31,
+    30,
+    31,
+    30,
+    31,
+    31,
+    30,
+    31,
+    30,
+    31,
+  ];
+
+  return dia >= 1 && dia <= diasPorMes[mes - 1];
+};
+
 export default function ModalDespensa({
   visivel,
   aoFechar,
@@ -59,6 +86,7 @@ export default function ModalDespensa({
   const [imagem, setImagem] = useState<string | null>(null);
 
   const [nomeErro, setNomeErro] = useState("");
+  const [dataErro, setDataErro] = useState("");
 
   const [confirmacaoVisivel, setConfirmacaoVisivel] = useState(false);
   const [alertaPermissaoVisivel, setAlertaPermissaoVisivel] = useState(false);
@@ -115,6 +143,7 @@ export default function ModalDespensa({
       setValidade(produtoEdicao.validade || "");
       setImagem(produtoEdicao.imagem || null);
       setNomeErro("");
+      setDataErro("");
     } else {
       setNome("");
       setMarca("");
@@ -122,6 +151,7 @@ export default function ModalDespensa({
       setValidade("");
       setImagem(null);
       setNomeErro("");
+      setDataErro("");
     }
   }, [produtoEdicao, visivel]);
 
@@ -150,14 +180,27 @@ export default function ModalDespensa({
     setValidade("");
     setImagem(null);
     setNomeErro("");
+    setDataErro("");
     aoFechar();
   };
 
   const lidarComGuardar = () => {
+    let valido = true;
+    setNomeErro("");
+    setDataErro("");
+
     if (nome.trim() === "") {
       setNomeErro(t("mod_nome_erro"));
-      return;
+      valido = false;
     }
+
+    if (validade && !validarData(validade)) {
+      setDataErro(t("mod_data_erro"));
+      valido = false;
+    }
+
+    if (!valido) return;
+
     aoGuardar(nome, marca, quantidade, validade, imagem, produtoEdicao?.id);
     limparEFechar();
   };
@@ -360,15 +403,45 @@ export default function ModalDespensa({
                   <View style={styles.metadeDir}>
                     <Text style={styles.label}>{t("mod_validade")}</Text>
                     <TextInput
-                      style={styles.input}
+                      style={[
+                        styles.input,
+                        {
+                          borderWidth: 1,
+                          borderColor: "transparent",
+                          marginBottom: 0,
+                        },
+                        dataErro
+                          ? {
+                              borderColor: "#d32f2f",
+                              backgroundColor: "#fff5f5",
+                            }
+                          : null,
+                      ]}
                       placeholder={t("mod_validade_ex")}
                       value={validade}
-                      onChangeText={formatarData}
+                      onChangeText={(texto) => {
+                        formatarData(texto);
+                        setDataErro("");
+                      }}
                       keyboardType="numeric"
                       maxLength={10}
                       cursorColor="#2e7d32"
                       selectionColor="rgba(46, 125, 50, 0.3)"
                     />
+                    {dataErro ? (
+                      <Text
+                        style={{
+                          color: "#d32f2f",
+                          fontSize: 13,
+                          marginTop: 4,
+                          marginBottom: 5,
+                        }}
+                      >
+                        {dataErro}
+                      </Text>
+                    ) : (
+                      <View style={{ height: 5 }} />
+                    )}
                   </View>
                 </View>
 

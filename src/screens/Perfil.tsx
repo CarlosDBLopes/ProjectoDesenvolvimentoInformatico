@@ -15,6 +15,7 @@ import {
 import Toast from "react-native-toast-message";
 import { Ionicons } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { styles } from "../styles/PerfilStyles";
 import BotaoIdiomaFlutuante from "../components/BotaoIdiomaFlutuante";
@@ -27,17 +28,20 @@ export default function Perfil({ navigation }: any) {
   const [email, setEmail] = useState("");
   const [carregandoDados, setCarregandoDados] = useState(true);
 
+  const [modalNomeVisivel, setModalNomeVisivel] = useState(false);
+  const [novoNome, setNovoNome] = useState("");
+  const [nomeErro, setNomeErro] = useState("");
+  const [gravandoNome, setGravandoNome] = useState(false);
+
   const [modalPasswordVisivel, setModalPasswordVisivel] = useState(false);
   const [novaPassword, setNovaPassword] = useState("");
   const [confirmarPassword, setConfirmarPassword] = useState("");
-
   const [mostrarNovaPassword, setMostrarNovaPassword] = useState(false);
   const [mostrarConfirmarPassword, setMostrarConfirmarPassword] =
     useState(false);
-
   const [novaPasswordErro, setNovaPasswordErro] = useState("");
   const [confirmarPasswordErro, setConfirmarPasswordErro] = useState("");
-  const [gravando, setGravando] = useState(false);
+  const [gravandoPass, setGravandoPass] = useState(false);
 
   const [tecladoAberto, setTecladoAberto] = useState(false);
 
@@ -73,12 +77,19 @@ export default function Perfil({ navigation }: any) {
 
       if (perfilData && perfilData.nome) {
         setNome(perfilData.nome);
+        setNovoNome(perfilData.nome);
       }
     }
     setCarregandoDados(false);
   };
 
-  const limparEFecharModal = () => {
+  const limparEFecharModalNome = () => {
+    setNovoNome(nome);
+    setNomeErro("");
+    setModalNomeVisivel(false);
+  };
+
+  const limparEFecharModalPass = () => {
     setNovaPassword("");
     setConfirmarPassword("");
     setNovaPasswordErro("");
@@ -86,6 +97,49 @@ export default function Perfil({ navigation }: any) {
     setMostrarNovaPassword(false);
     setMostrarConfirmarPassword(false);
     setModalPasswordVisivel(false);
+  };
+
+  const alterarNome = async () => {
+    let valido = true;
+    setNomeErro("");
+
+    if (!novoNome.trim()) {
+      setNomeErro(t("auth_erro_nome_vazio"));
+      valido = false;
+    } else if (!/^[a-zA-ZÀ-ÿ\s]+$/.test(novoNome)) {
+      setNomeErro(t("auth_erro_nome_invalido"));
+      valido = false;
+    }
+
+    if (!valido) return;
+
+    setGravandoNome(true);
+    const { data: authData } = await supabase.auth.getUser();
+
+    if (authData?.user) {
+      const { error } = await supabase
+        .from("perfis")
+        .update({ nome: novoNome })
+        .eq("id", authData.user.id);
+
+      if (error) {
+        Toast.show({
+          type: "error",
+          text1: t("toast_erro"),
+          text2: error.message,
+        });
+      } else {
+        setNome(novoNome);
+        Toast.show({
+          type: "success",
+          text1: t("toast_sucesso"),
+          text2: t("perf_sucesso_nome"),
+        });
+        setNomeErro("");
+        setModalNomeVisivel(false);
+      }
+    }
+    setGravandoNome(false);
   };
 
   const alterarPassword = async () => {
@@ -111,7 +165,7 @@ export default function Perfil({ navigation }: any) {
 
     if (!valido) return;
 
-    setGravando(true);
+    setGravandoPass(true);
 
     const { error } = await supabase.auth.updateUser({
       password: novaPassword,
@@ -134,10 +188,10 @@ export default function Perfil({ navigation }: any) {
         text1: t("toast_sucesso"),
         text2: t("perf_sucesso_alterada"),
       });
-      limparEFecharModal();
+      limparEFecharModalPass();
     }
 
-    setGravando(false);
+    setGravandoPass(false);
   };
 
   const fazerLogout = async () => {
@@ -148,19 +202,14 @@ export default function Perfil({ navigation }: any) {
         text1: t("perf_erro_sair"),
         text2: error.message,
       });
+    } else {
+      await AsyncStorage.removeItem("@chef_ia_historico");
     }
   };
 
   if (carregandoDados) {
     return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: "#fff",
-        }}
-      >
+      <View style={styles.containerLoading}>
         <ActivityIndicator size="large" color="#2e7d32" />
       </View>
     );
@@ -201,6 +250,28 @@ export default function Perfil({ navigation }: any) {
 
         <Pressable
           style={({ pressed }) => [
+            styles.botaoSecundario,
+            pressed && { transform: [{ scale: 0.96 }], opacity: 0.85 },
+          ]}
+          onPress={() => {
+            setNovoNome(nome);
+            setNomeErro("");
+            setModalNomeVisivel(true);
+          }}
+        >
+          <Ionicons
+            name="person-outline"
+            size={22}
+            color="#fff"
+            style={{ marginRight: 10 }}
+          />
+          <Text style={styles.textoBotaoSecundario}>
+            {t("perf_btn_alterar_nome")}
+          </Text>
+        </Pressable>
+
+        <Pressable
+          style={({ pressed }) => [
             styles.botaoAbrirModal,
             pressed && { transform: [{ scale: 0.96 }], opacity: 0.85 },
           ]}
@@ -237,8 +308,102 @@ export default function Perfil({ navigation }: any) {
       <Modal
         animationType="slide"
         transparent={true}
+        visible={modalNomeVisivel}
+        onRequestClose={limparEFecharModalNome}
+        statusBarTranslucent={true}
+        navigationBarTranslucent={true}
+      >
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior="padding"
+          enabled={Platform.OS === "ios" ? true : tecladoAberto}
+        >
+          <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+            <View style={styles.fundoEscuro}>
+              <TouchableWithoutFeedback>
+                <View
+                  style={[
+                    styles.cartaoModal,
+                    tecladoAberto && { paddingBottom: 20 },
+                  ]}
+                >
+                  <View style={styles.cabecalhoModal}>
+                    <Text style={styles.tituloModal}>
+                      {t("perf_btn_alterar_nome")}
+                    </Text>
+                    <Pressable
+                      onPress={limparEFecharModalNome}
+                      style={({ pressed }) => [
+                        pressed && {
+                          transform: [{ scale: 0.85 }],
+                          opacity: 0.7,
+                        },
+                      ]}
+                    >
+                      <Ionicons name="close" size={28} color="#888" />
+                    </Pressable>
+                  </View>
+
+                  <Text style={styles.labelModal}>{t("perf_novo_nome")}</Text>
+                  <View
+                    style={[
+                      styles.inputContainer,
+                      nomeErro ? styles.inputContainerErro : null,
+                    ]}
+                  >
+                    <Ionicons
+                      name="person-outline"
+                      size={20}
+                      color={nomeErro ? "#d32f2f" : "#666"}
+                      style={styles.iconeInput}
+                    />
+                    <TextInput
+                      style={styles.inputModal}
+                      placeholder={t("perf_nome")}
+                      value={novoNome}
+                      onChangeText={(texto) => {
+                        setNovoNome(texto);
+                        setNomeErro("");
+                      }}
+                      cursorColor="#2e7d32"
+                      selectionColor="rgba(46, 125, 50, 0.3)"
+                    />
+                  </View>
+                  {nomeErro ? (
+                    <Text style={styles.textoErro}>{nomeErro}</Text>
+                  ) : null}
+
+                  <Pressable
+                    style={({ pressed }) => [
+                      styles.botaoGuardar,
+                      pressed && {
+                        transform: [{ scale: 0.96 }],
+                        opacity: 0.85,
+                      },
+                    ]}
+                    onPress={alterarNome}
+                    disabled={gravandoNome}
+                  >
+                    {gravandoNome ? (
+                      <ActivityIndicator color="#fff" />
+                    ) : (
+                      <Text style={styles.textoBotaoGuardar}>
+                        {t("perf_btn_atualizar_nome")}
+                      </Text>
+                    )}
+                  </Pressable>
+                </View>
+              </TouchableWithoutFeedback>
+            </View>
+          </TouchableWithoutFeedback>
+        </KeyboardAvoidingView>
+      </Modal>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
         visible={modalPasswordVisivel}
-        onRequestClose={limparEFecharModal}
+        onRequestClose={limparEFecharModalPass}
         statusBarTranslucent={true}
         navigationBarTranslucent={true}
       >
@@ -261,7 +426,7 @@ export default function Perfil({ navigation }: any) {
                       {t("perf_btn_alterar_pass")}
                     </Text>
                     <Pressable
-                      onPress={limparEFecharModal}
+                      onPress={limparEFecharModalPass}
                       style={({ pressed }) => [
                         pressed && {
                           transform: [{ scale: 0.85 }],
@@ -384,9 +549,9 @@ export default function Perfil({ navigation }: any) {
                       },
                     ]}
                     onPress={alterarPassword}
-                    disabled={gravando}
+                    disabled={gravandoPass}
                   >
-                    {gravando ? (
+                    {gravandoPass ? (
                       <ActivityIndicator color="#fff" />
                     ) : (
                       <Text style={styles.textoBotaoGuardar}>

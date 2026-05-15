@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { styles } from "../styles/ModalChefIAStyles";
 import { falarComChef } from "../services/gemini";
@@ -53,10 +54,43 @@ export default function ModalChefIA({ visivel, aoFechar }: ModalChefIAProps) {
   }, []);
 
   useEffect(() => {
-    if (visivel) {
-      setMensagens([{ id: "saudacao", texto: t("ia_ola"), remetente: "ia" }]);
-    }
-  }, [visivel, i18n.language]);
+    const carregarHistorico = async () => {
+      if (visivel) {
+        try {
+          const historicoGuardado =
+            await AsyncStorage.getItem("@chef_ia_historico");
+          if (historicoGuardado) {
+            setMensagens(JSON.parse(historicoGuardado));
+          } else {
+            setMensagens([
+              { id: "saudacao", texto: t("ia_ola"), remetente: "ia" },
+            ]);
+          }
+        } catch (error) {
+          setMensagens([
+            { id: "saudacao", texto: t("ia_ola"), remetente: "ia" },
+          ]);
+        }
+      }
+    };
+
+    carregarHistorico();
+  }, [visivel]);
+
+  useEffect(() => {
+    const guardarHistorico = async () => {
+      if (mensagens.length > 0) {
+        try {
+          await AsyncStorage.setItem(
+            "@chef_ia_historico",
+            JSON.stringify(mensagens),
+          );
+        } catch (error) {}
+      }
+    };
+
+    guardarHistorico();
+  }, [mensagens]);
 
   const enviarMensagem = async () => {
     if (!input.trim() || carregando) return;

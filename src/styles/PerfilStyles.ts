@@ -5,6 +5,12 @@ export const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
   },
+  containerLoading: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#fff",
+  },
   scroll: {
     flexGrow: 1,
     padding: 20,
@@ -49,6 +55,25 @@ export const styles = StyleSheet.create({
     fontSize: 18,
     color: "#333",
     fontWeight: "600",
+  },
+  botaoSecundario: {
+    backgroundColor: "#2196F3",
+    borderRadius: 10,
+    height: 55,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 15,
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  textoBotaoSecundario: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
   },
   botaoAbrirModal: {
     backgroundColor: "#2e7d32",
