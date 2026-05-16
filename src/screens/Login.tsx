@@ -80,7 +80,13 @@ export default function Login({ navigation }: any) {
     });
 
     if (error) {
-      setErroGeral(t("auth_erro_credenciais"));
+      const isErroRede =
+        error.message?.toLowerCase().includes("network") ||
+        error.message?.toLowerCase().includes("fetch");
+
+      setErroGeral(
+        isErroRede ? t("global_erro_rede") : t("auth_erro_credenciais"),
+      );
       setCarregando(false);
     } else {
       Toast.show({

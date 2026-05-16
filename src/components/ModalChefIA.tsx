@@ -81,9 +81,10 @@ export default function ModalChefIA({ visivel, aoFechar }: ModalChefIAProps) {
     const guardarHistorico = async () => {
       if (mensagens.length > 0) {
         try {
+          const historicoRecente = mensagens.slice(-50);
           await AsyncStorage.setItem(
             "@chef_ia_historico",
-            JSON.stringify(mensagens),
+            JSON.stringify(historicoRecente),
           );
         } catch (error) {}
       }
@@ -119,12 +120,18 @@ export default function ModalChefIA({ visivel, aoFechar }: ModalChefIAProps) {
           remetente: "ia",
         },
       ]);
-    } catch (erro) {
+    } catch (erro: any) {
+      const mensagemErro = erro?.message || "";
+
+      const isErroRede =
+        mensagemErro.toLowerCase().includes("network") ||
+        mensagemErro.toLowerCase().includes("fetch");
+
       setMensagens((prev) => [
         ...prev,
         {
           id: (Date.now() + 1).toString(),
-          texto: t("ia_erro"),
+          texto: isErroRede ? t("global_erro_rede") : t("ia_erro"),
           remetente: "ia",
         },
       ]);

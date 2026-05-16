@@ -53,10 +53,14 @@ export default function RecuperarPassword({ navigation }: any) {
     const { error } = await supabase.auth.resetPasswordForEmail(email);
 
     if (error) {
+      const isErroRede =
+        error.message?.toLowerCase().includes("network") ||
+        error.message?.toLowerCase().includes("fetch");
+
       Toast.show({
         type: "error",
-        text1: t("toast_erro"),
-        text2: error.message,
+        text1: isErroRede ? t("global_erro_titulo") : t("toast_erro"),
+        text2: isErroRede ? t("global_erro_rede") : error.message,
       });
     } else {
       Toast.show({

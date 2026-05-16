@@ -108,8 +108,13 @@ export default function Registo({ navigation }: any) {
 
     if (signUpError) {
       let mensagemErro = signUpError.message;
+      const isErroRede =
+        mensagemErro?.toLowerCase().includes("network") ||
+        mensagemErro?.toLowerCase().includes("fetch");
 
-      if (
+      if (isErroRede) {
+        mensagemErro = t("global_erro_rede");
+      } else if (
         mensagemErro.includes("User already registered") ||
         mensagemErro.includes("already exists")
       ) {

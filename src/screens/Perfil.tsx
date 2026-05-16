@@ -64,7 +64,22 @@ export default function Perfil({ navigation }: any) {
   }, []);
 
   const importarDados = async () => {
-    const { data: authData } = await supabase.auth.getUser();
+    const { data: authData, error: authError } = await supabase.auth.getUser();
+
+    if (authError) {
+      const isErroRede =
+        authError.message?.toLowerCase().includes("network") ||
+        authError.message?.toLowerCase().includes("fetch");
+      Toast.show({
+        type: "error",
+        text1: isErroRede ? t("global_erro_titulo") : t("toast_erro"),
+        text2: isErroRede
+          ? t("global_erro_rede")
+          : t("toast_erro_carregar_perfil"),
+      });
+      setCarregandoDados(false);
+      return;
+    }
 
     if (authData?.user) {
       setEmail(authData.user.email || "");
@@ -119,17 +134,20 @@ export default function Perfil({ navigation }: any) {
     if (authData?.user) {
       const { error } = await supabase
         .from("perfis")
-        .update({ nome: novoNome })
+        .update({ nome: novoNome.trim() })
         .eq("id", authData.user.id);
 
       if (error) {
+        const isErroRede =
+          error.message?.toLowerCase().includes("network") ||
+          error.message?.toLowerCase().includes("fetch");
         Toast.show({
           type: "error",
-          text1: t("toast_erro"),
-          text2: error.message,
+          text1: isErroRede ? t("global_erro_titulo") : t("toast_erro"),
+          text2: isErroRede ? t("global_erro_rede") : error.message,
         });
       } else {
-        setNome(novoNome);
+        setNome(novoNome.trim());
         Toast.show({
           type: "success",
           text1: t("toast_sucesso"),
@@ -172,13 +190,18 @@ export default function Perfil({ navigation }: any) {
     });
 
     if (error) {
-      let mensagemErro = error.message;
+      let mensagemErro = error.message || "";
+      const isErroRede =
+        mensagemErro.toLowerCase().includes("network") ||
+        mensagemErro.toLowerCase().includes("fetch");
 
       if (
         mensagemErro.includes("different from the old password") ||
         mensagemErro.includes("same password")
       ) {
         setNovaPasswordErro(t("perf_erro_pass_igual"));
+      } else if (isErroRede) {
+        setNovaPasswordErro(t("global_erro_rede"));
       } else {
         setNovaPasswordErro(t("toast_erro") + mensagemErro);
       }
@@ -197,10 +220,13 @@ export default function Perfil({ navigation }: any) {
   const fazerLogout = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) {
+      const isErroRede =
+        error.message?.toLowerCase().includes("network") ||
+        error.message?.toLowerCase().includes("fetch");
       Toast.show({
         type: "error",
-        text1: t("perf_erro_sair"),
-        text2: error.message,
+        text1: isErroRede ? t("global_erro_titulo") : t("perf_erro_sair"),
+        text2: isErroRede ? t("global_erro_rede") : error.message,
       });
     } else {
       await AsyncStorage.removeItem("@chef_ia_historico");

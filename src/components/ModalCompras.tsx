@@ -89,7 +89,7 @@ export default function ModalCompras({
       setNomeErro(t("mod_nome_erro"));
       return;
     }
-    aoGuardar(nome, marca, quantidade, produtoEdicao?.id);
+    aoGuardar(nome.trim(), marca.trim(), quantidade, produtoEdicao?.id);
     limparEFechar();
   };
 

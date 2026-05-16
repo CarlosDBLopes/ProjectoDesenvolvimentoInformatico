@@ -201,7 +201,14 @@ export default function ModalDespensa({
 
     if (!valido) return;
 
-    aoGuardar(nome, marca, quantidade, validade, imagem, produtoEdicao?.id);
+    aoGuardar(
+      nome.trim(),
+      marca.trim(),
+      quantidade,
+      validade,
+      imagem,
+      produtoEdicao?.id,
+    );
     limparEFechar();
   };
 

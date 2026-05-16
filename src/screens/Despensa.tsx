@@ -49,10 +49,15 @@ export default function Despensa({ navigation, route }: any) {
       .order("created_at", { ascending: false });
 
     if (error) {
+      const isErroRede =
+        error.message?.toLowerCase().includes("network") ||
+        error.message?.toLowerCase().includes("fetch");
       Toast.show({
         type: "error",
-        text1: t("toast_erro"),
-        text2: t("toast_erro_carregar_despensa"),
+        text1: isErroRede ? t("global_erro_titulo") : t("toast_erro"),
+        text2: isErroRede
+          ? t("global_erro_rede")
+          : t("toast_erro_carregar_despensa"),
       });
     } else if (data) {
       setProdutos(data);
@@ -143,10 +148,15 @@ export default function Despensa({ navigation, route }: any) {
         .upload(nomeFicheiro, decode(base64), { contentType: "image/jpeg" });
 
       if (uploadError) {
+        const isErroRede =
+          uploadError.message?.toLowerCase().includes("network") ||
+          uploadError.message?.toLowerCase().includes("fetch");
         Toast.show({
           type: "error",
-          text1: t("toast_aviso_imagem"),
-          text2: t("toast_aviso_imagem_msg"),
+          text1: isErroRede ? t("global_erro_titulo") : t("toast_aviso_imagem"),
+          text2: isErroRede
+            ? t("global_erro_rede")
+            : t("toast_aviso_imagem_msg"),
         });
       } else {
         const { data: publicData } = supabase.storage
@@ -182,10 +192,15 @@ export default function Despensa({ navigation, route }: any) {
         .eq("id", id);
 
       if (error) {
+        const isErroRede =
+          error.message?.toLowerCase().includes("network") ||
+          error.message?.toLowerCase().includes("fetch");
         Toast.show({
           type: "error",
-          text1: t("toast_erro"),
-          text2: t("toast_erro_atualizar_produto"),
+          text1: isErroRede ? t("global_erro_titulo") : t("toast_erro"),
+          text2: isErroRede
+            ? t("global_erro_rede")
+            : t("toast_erro_atualizar_produto"),
         });
         setCarregando(false);
       } else {
@@ -209,10 +224,15 @@ export default function Despensa({ navigation, route }: any) {
       ]);
 
       if (error) {
+        const isErroRede =
+          error.message?.toLowerCase().includes("network") ||
+          error.message?.toLowerCase().includes("fetch");
         Toast.show({
           type: "error",
-          text1: t("toast_erro"),
-          text2: t("toast_erro_guardar_produto"),
+          text1: isErroRede ? t("global_erro_titulo") : t("toast_erro"),
+          text2: isErroRede
+            ? t("global_erro_rede")
+            : t("toast_erro_guardar_produto"),
         });
         setCarregando(false);
       } else {
@@ -233,10 +253,15 @@ export default function Despensa({ navigation, route }: any) {
     const { error } = await supabase.from("despensa").delete().eq("id", id);
 
     if (error) {
+      const isErroRede =
+        error.message?.toLowerCase().includes("network") ||
+        error.message?.toLowerCase().includes("fetch");
       Toast.show({
         type: "error",
-        text1: t("toast_erro"),
-        text2: t("toast_erro_eliminar_produto"),
+        text1: isErroRede ? t("global_erro_titulo") : t("toast_erro"),
+        text2: isErroRede
+          ? t("global_erro_rede")
+          : t("toast_erro_eliminar_produto"),
       });
       setCarregando(false);
     } else {

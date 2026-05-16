@@ -10,6 +10,7 @@ import {
 import { useFocusEffect } from "@react-navigation/native";
 import Svg, { Circle } from "react-native-svg";
 import { useTranslation } from "react-i18next";
+import Toast from "react-native-toast-message";
 
 import { styles } from "../styles/DashboardStyles";
 import { supabase } from "../services/supabase";
@@ -64,11 +65,23 @@ export default function Dashboard({ navigation }: any) {
           }
         }
 
-        const { data: produtosData } = await supabase
+        const { data: produtosData, error: produtosError } = await supabase
           .from("despensa")
           .select("*");
 
-        if (produtosData) {
+        if (produtosError) {
+          const isErroRede =
+            produtosError.message?.toLowerCase().includes("network") ||
+            produtosError.message?.toLowerCase().includes("fetch");
+
+          Toast.show({
+            type: "error",
+            text1: isErroRede ? t("global_erro_titulo") : t("toast_erro"),
+            text2: isErroRede
+              ? t("global_erro_rede")
+              : t("toast_erro_carregar_despensa"),
+          });
+        } else if (produtosData) {
           setProdutos(produtosData);
         }
 

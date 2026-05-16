@@ -121,6 +121,7 @@ const resources = {
       toast_erro_alterar_estado: "Não foi possível alterar o estado.",
       toast_erro_eliminar_lista: "Não foi possível eliminar da lista.",
       toast_sucesso_eliminar_lista: "O item foi removido da lista.",
+      toast_erro_carregar_perfil: "Não foi possível carregar os dados!",
 
       // --- AUTENTICAÇÃO (LOGIN) ---
       auth_login_subtitulo: "A sua despensa na palma da mão.",
@@ -187,6 +188,10 @@ const resources = {
       scan_encontrado: "Produto encontrado!",
       scan_nao_encontrado: "Produto não encontrado.",
       scan_nao_encontrado_desc: "Por favor, insira as informações manualmente.",
+
+      // --- GLOBAIS ---
+      global_erro_titulo: "Erro de Ligação",
+      global_erro_rede: "Por favor, verifique a sua conexão à internet!",
     },
   },
   en: {
@@ -308,6 +313,7 @@ const resources = {
       toast_erro_alterar_estado: "Could not change the status.",
       toast_erro_eliminar_lista: "Could not delete from the list.",
       toast_sucesso_eliminar_lista: "Item removed from the list.",
+      toast_erro_carregar_perfil: "Unable to load the data!",
 
       // --- AUTENTICAÇÃO (LOGIN) ---
       auth_login_subtitulo: "Your pantry in the palm of your hand.",
@@ -373,6 +379,10 @@ const resources = {
       scan_encontrado: "Product found!",
       scan_nao_encontrado: "Product not found.",
       scan_nao_encontrado_desc: "Please enter the information manually.",
+
+      // --- GLOBAIS ---
+      global_erro_titulo: "Connection error",
+      global_erro_rede: "Please check your internet connection!",
     },
   },
   es: {
@@ -495,6 +505,7 @@ const resources = {
       toast_erro_alterar_estado: "No se pudo cambiar el estado.",
       toast_erro_eliminar_lista: "No se pudo eliminar de la lista.",
       toast_sucesso_eliminar_lista: "El artículo fue removido de la lista.",
+      toast_erro_carregar_perfil: "¡No se han podido cargar los datos!",
 
       // --- AUTENTICAÇÃO (LOGIN) ---
       auth_login_subtitulo: "Tu despensa en la palma de tu mano.",
@@ -563,6 +574,10 @@ const resources = {
       scan_nao_encontrado: "Producto no encontrado",
       scan_nao_encontrado_desc:
         "Por favor, inserte la información manualmente.",
+
+      // --- GLOBAIS ---
+      global_erro_titulo: "Error de conexión",
+      global_erro_rede: "¡Por favor, comprueba tu conexión a Internet!",
     },
   },
 };

@@ -45,10 +45,15 @@ export default function Compras() {
       .order("created_at", { ascending: false });
 
     if (error) {
+      const isErroRede =
+        error.message?.toLowerCase().includes("network") ||
+        error.message?.toLowerCase().includes("fetch");
       Toast.show({
         type: "error",
-        text1: t("toast_erro"),
-        text2: t("toast_erro_carregar_compras"),
+        text1: isErroRede ? t("global_erro_titulo") : t("toast_erro"),
+        text2: isErroRede
+          ? t("global_erro_rede")
+          : t("toast_erro_carregar_compras"),
       });
     } else if (data) {
       setListaCompras(data);
@@ -86,13 +91,18 @@ export default function Compras() {
         .update({ nome, marca, quantidade })
         .eq("id", id);
 
-      if (error)
+      if (error) {
+        const isErroRede =
+          error.message?.toLowerCase().includes("network") ||
+          error.message?.toLowerCase().includes("fetch");
         Toast.show({
           type: "error",
-          text1: t("toast_erro"),
-          text2: t("toast_erro_atualizar_produto"),
+          text1: isErroRede ? t("global_erro_titulo") : t("toast_erro"),
+          text2: isErroRede
+            ? t("global_erro_rede")
+            : t("toast_erro_atualizar_produto"),
         });
-      else {
+      } else {
         Toast.show({
           type: "success",
           text1: t("toast_sucesso"),
@@ -108,10 +118,13 @@ export default function Compras() {
         ]);
 
       if (error) {
+        const isErroRede =
+          error.message?.toLowerCase().includes("network") ||
+          error.message?.toLowerCase().includes("fetch");
         Toast.show({
           type: "error",
-          text1: t("toast_erro"),
-          text2: t("toast_erro_add_lista"),
+          text1: isErroRede ? t("global_erro_titulo") : t("toast_erro"),
+          text2: isErroRede ? t("global_erro_rede") : t("toast_erro_add_lista"),
         });
       } else {
         Toast.show({
@@ -139,10 +152,15 @@ export default function Compras() {
       .eq("id", id);
 
     if (error) {
+      const isErroRede =
+        error.message?.toLowerCase().includes("network") ||
+        error.message?.toLowerCase().includes("fetch");
       Toast.show({
         type: "error",
-        text1: t("toast_erro"),
-        text2: t("toast_erro_alterar_estado"),
+        text1: isErroRede ? t("global_erro_titulo") : t("toast_erro"),
+        text2: isErroRede
+          ? t("global_erro_rede")
+          : t("toast_erro_alterar_estado"),
       });
       importarCompras(false);
     }
@@ -152,10 +170,15 @@ export default function Compras() {
     const { error } = await supabase.from("compras").delete().eq("id", id);
 
     if (error) {
+      const isErroRede =
+        error.message?.toLowerCase().includes("network") ||
+        error.message?.toLowerCase().includes("fetch");
       Toast.show({
         type: "error",
-        text1: t("toast_erro"),
-        text2: t("toast_erro_eliminar_lista"),
+        text1: isErroRede ? t("global_erro_titulo") : t("toast_erro"),
+        text2: isErroRede
+          ? t("global_erro_rede")
+          : t("toast_erro_eliminar_lista"),
       });
     } else {
       Toast.show({
